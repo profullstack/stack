@@ -1,0 +1,76 @@
+{
+  "name": "@profullstack/stack",
+  "version": "0.1.0",
+  "description": "The Profullstack open source stack — shared modules for Next.js/Node apps: referrals, email, supabase, feedback widget, coinpay, crawlproof.",
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": { "types": "./dist/index.d.ts", "default": "./dist/index.js" },
+      "require": { "types": "./dist/index.d.cts", "default": "./dist/index.cjs" }
+    },
+    "./referrals": {
+      "import": { "types": "./dist/referrals/index.d.ts", "default": "./dist/referrals/index.js" },
+      "require": { "types": "./dist/referrals/index.d.cts", "default": "./dist/referrals/index.cjs" }
+    },
+    "./email": {
+      "import": { "types": "./dist/email/index.d.ts", "default": "./dist/email/index.js" },
+      "require": { "types": "./dist/email/index.d.cts", "default": "./dist/email/index.cjs" }
+    },
+    "./supabase": {
+      "import": { "types": "./dist/supabase/index.d.ts", "default": "./dist/supabase/index.js" },
+      "require": { "types": "./dist/supabase/index.d.cts", "default": "./dist/supabase/index.cjs" }
+    },
+    "./feedback": {
+      "import": { "types": "./dist/feedback/index.d.ts", "default": "./dist/feedback/index.js" },
+      "require": { "types": "./dist/feedback/index.d.cts", "default": "./dist/feedback/index.cjs" }
+    },
+    "./coinpay": {
+      "import": { "types": "./dist/coinpay/index.d.ts", "default": "./dist/coinpay/index.js" },
+      "require": { "types": "./dist/coinpay/index.d.cts", "default": "./dist/coinpay/index.cjs" }
+    },
+    "./crawlproof": {
+      "import": { "types": "./dist/crawlproof/index.d.ts", "default": "./dist/crawlproof/index.js" },
+      "require": { "types": "./dist/crawlproof/index.d.cts", "default": "./dist/crawlproof/index.cjs" }
+    },
+    "./package.json": "./package.json"
+  },
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsup",
+    "test": "vitest run",
+    "test:contract": "tsup && vitest run tests/contract/",
+    "typecheck": "tsc --noEmit",
+    "prepublishOnly": "npm run build && npm test"
+  },
+  "dependencies": {
+    "@profullstack/emailer": "^1.0.1",
+    "@profullstack/referrals": "^0.1.0"
+  },
+  "peerDependencies": {
+    "@supabase/ssr": ">=0.5.0",
+    "next": ">=13.0.0",
+    "react": ">=18.0.0"
+  },
+  "peerDependenciesMeta": {
+    "@supabase/ssr": { "optional": true },
+    "next": { "optional": true },
+    "react": { "optional": true }
+  },
+  "devDependencies": {
+    "@supabase/ssr": "^0.7.0",
+    "@types/node": "^24.0.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "tsup": "^8.5.0",
+    "typescript": "^5.9.0",
+    "vitest": "^3.2.4"
+  },
+  "engines": { "node": ">=18" },
+  "publishConfig": { "access": "public" },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/profullstack/stack.git"
+  },
+  "keywords": ["profullstack", "stack", "nextjs", "supabase", "referrals", "coinpay", "crawlproof"]
+}
