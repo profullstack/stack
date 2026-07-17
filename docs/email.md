@@ -23,9 +23,9 @@ npm install @profullstack/stack
 import { createContactRoute, createEmailer, Emailer } from "@profullstack/stack/email";
 ```
 
-`next` is an optional peer: the handler lazily uses `NextResponse.json` when
-Next.js is present and falls back to a standard `Response` otherwise. Both are
-valid return values for App Router route handlers.
+`next` is an optional peer: the handler always returns a standard Web
+`Response` (no `next/server` import at all), which is a valid return value
+for App Router route handlers — and keeps the module bundler-proof.
 
 ## Quick start
 

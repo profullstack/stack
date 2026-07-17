@@ -13,9 +13,10 @@ recommended `getAll`/`setAll` cookie methods, with:
   assertion or a silent `?? ""`,
 - an opt-in `disconnectRealtime` flag for server-side clients (ported from
   ugig.net's memory-leak fix),
-- zero hard `next` imports — `next/server` is lazy-required only inside
-  `updateSession()`, so importing this module never pulls Next.js into
-  non-Next bundles.
+- zero hard `next` imports — `next/server` is loaded via a literal dynamic
+  `import()` only inside `updateSession()`, so importing this module never
+  pulls Next.js into non-Next bundles (and bundlers can statically analyze
+  the import).
 
 ## Install / import
 

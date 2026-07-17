@@ -20,8 +20,10 @@ import {
 } from "@profullstack/stack/referrals";
 ```
 
-`next` is an optional peer dependency — only the route handler and the
-re-exported Next helpers touch it (via a lazy `require("next/server")`), so
+`next` is an optional peer dependency — `createReferralsRouteHandler` returns
+plain Web `Response` objects (zero Next imports, bundler-proof), and only the
+re-exported `makeReferralHandlers` helper (from `@profullstack/referrals/next`)
+touches `next/server` (via a lazy `require`), so
 `createReferralsClient` works in any Node context. The client talks to
 Supabase through a structural interface; your existing
 `@supabase/supabase-js` / `@supabase/ssr` client satisfies it without casts.
