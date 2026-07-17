@@ -44,26 +44,10 @@ export interface ContactRequest {
   json(): Promise<unknown>;
 }
 
-type NextResponseLike = {
-  json(data: unknown, init?: ResponseInit): Response;
-};
-
-// Imported lazily so the package doesn't break in non-Next environments
-// (tests, scripts, plain Node). Falls back to a standard Response, which
-// Next.js App Router accepts interchangeably for JSON route responses.
-function nextResponse(): NextResponseLike | null {
-  try {
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const mod = require("next/server") as { NextResponse: NextResponseLike };
-    return mod.NextResponse;
-  } catch {
-    return null;
-  }
-}
-
+// A plain `Response` — never NextResponse — so this module has zero Next
+// dependency (usable from tests, scripts, plain Node). Next.js App Router
+// accepts a standard Response interchangeably with NextResponse.json() for JSON.
 function jsonResponse(body: unknown, init?: ResponseInit): Response {
-  const NR = nextResponse();
-  if (NR) return NR.json(body, init);
   return new Response(JSON.stringify(body), {
     status: init?.status ?? 200,
     headers: { "content-type": "application/json" },

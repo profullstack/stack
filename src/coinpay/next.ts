@@ -53,11 +53,14 @@ type NextResponseLike = {
   redirect(url: string | URL, init?: number | ResponseInit): ResponseWithCookies;
 };
 
-// We import NextResponse lazily so the package doesn't break in
-// non-Next environments (core client/webhook/oauth work without Next).
-function nextResponse(): NextResponseLike {
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const { NextResponse } = require("next/server") as { NextResponse: NextResponseLike };
+// We load NextResponse lazily via dynamic import (not require) so the package
+// works in ESM builds and doesn't pull in `next` for non-Next consumers (core
+// client/webhook/oauth work without Next). Only loaded when a handler runs.
+async function nextResponse(): Promise<NextResponseLike> {
+  // Typed as `string` so tsc/dts doesn't resolve next/server's types (next is
+  // an optional peer dep, not installed here); the runtime import still works.
+  const specifier: string = "next/server";
+  const { NextResponse } = (await import(specifier)) as { NextResponse: NextResponseLike };
   return NextResponse;
 }
 
@@ -148,7 +151,7 @@ export function createCoinPayLoginHandler(
   } = options;
 
   return async function GET(request: CoinPayNextRequest): Promise<Response> {
-    const NR = nextResponse();
+    const NR = await nextResponse();
     const secure = secureCookies ?? isSecureDefault();
     const state = generateCoinPayState();
     const { codeVerifier, codeChallenge } = generateCoinPayPkcePair();
@@ -275,7 +278,7 @@ export function createCoinPayCallbackHandler(
   }
 
   return async function GET(request: CoinPayNextRequest): Promise<Response> {
-    const NR = nextResponse();
+    const NR = await nextResponse();
     const secure = secureCookies ?? isSecureDefault();
     const requestUrl = new URL(request.url);
     const appOrigin = (appOriginOpt ?? requestUrl.origin).replace(/\/+$/, "");

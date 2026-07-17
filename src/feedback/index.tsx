@@ -88,20 +88,13 @@ function injectFeedbackScript(
 }
 
 /**
- * Lazily requires next/navigation so the package doesn't break in non-Next
- * environments (same pattern as @profullstack/referrals/next). Returns null
- * when Next's app-router context is unavailable.
+ * Best-effort current pathname with no Next dependency: reads `window.location`
+ * on the client. NOT reactive to SPA navigation — for `hideOnRoutes` to update
+ * on client-side route changes, pass the `pathname` prop explicitly (e.g. from
+ * `next/navigation`'s `usePathname`).
  */
-function useNextPathname(): string | null {
-  try {
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const { usePathname } = require("next/navigation") as {
-      usePathname: () => string | null;
-    };
-    return usePathname();
-  } catch {
-    return null;
-  }
+function useClientPathname(): string | null {
+  return typeof window !== "undefined" ? window.location.pathname : null;
 }
 
 /**
@@ -125,8 +118,8 @@ export function FeedbackWidget({
   src = FEEDBACK_SCRIPT_URL,
   nonce,
 }: FeedbackWidgetProps): null {
-  const nextPathname = useNextPathname();
-  const currentPathname = pathname !== undefined ? pathname : nextPathname;
+  const detectedPathname = useClientPathname();
+  const currentPathname = pathname !== undefined ? pathname : detectedPathname;
   const hidden = matchesRoutePrefix(currentPathname, hideOnRoutes);
 
   useEffect(() => {

@@ -262,12 +262,15 @@ type NextServerModule = {
 };
 
 /**
- * Lazily load `next/server` so importing this module never requires `next`
- * (same pattern as `@profullstack/referrals/next`).
+ * Lazily load `next/server` via dynamic import so importing this module never
+ * pulls in `next` (and so it works in ESM builds — a bundled require() shim
+ * breaks Next's build). Only loaded when `updateSession` actually runs.
  */
-function loadNextServer(): NextServerModule {
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  return require("next/server") as NextServerModule;
+async function loadNextServer(): Promise<NextServerModule> {
+  // Typed as `string` so tsc/dts doesn't resolve next/server's types (next is
+  // an optional peer dep, not installed here); the runtime import still works.
+  const specifier: string = "next/server";
+  return (await import(specifier)) as NextServerModule;
 }
 
 /**
@@ -302,7 +305,7 @@ export async function updateSession<Database = any>(
   request: NextRequestLike,
   options: CreateServerSupabaseOptions = {}
 ): Promise<SupabaseSessionUpdate> {
-  const { NextResponse } = loadNextServer();
+  const { NextResponse } = await loadNextServer();
   let response = NextResponse.next({ request });
   const { url, anonKey } = resolveSupabaseConfig(options);
   const supabase = createServerClient<Database>(url, anonKey, {
