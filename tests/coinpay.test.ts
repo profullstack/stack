@@ -1,10 +1,10 @@
 /**
  * Unit tests for the coinpay module: merchant client, webhook verification,
- * OAuth helpers, and the Next.js route-handler factories. All network and
- * `next/server` access is mocked — no network, no Next runtime required.
+ * OAuth helpers, and the Next.js route-handler factories. All network access
+ * is mocked — no network, no Next runtime required (the route handlers return
+ * plain Web `Response` objects).
  */
 
-import Module from "node:module";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { createHash, createHmac } from "node:crypto";
 import {
@@ -42,7 +42,6 @@ function callOf(mock: ReturnType<typeof vi.fn>, index = 0): [string, RequestInit
 afterEach(() => {
   vi.unstubAllGlobals();
   vi.restoreAllMocks();
-  while (loadersToRestore.length > 0) loadersToRestore.pop()?.();
 });
 
 // ─── createCoinPayClient ────────────────────────────────────────────────────
@@ -420,51 +419,43 @@ describe("fetchCoinPayUserinfo", () => {
 
 // ─── Next.js route handlers ─────────────────────────────────────────────────
 
-type CookieSet = { name: string; value: string; options?: Record<string, unknown> };
+type CookieSet = { name: string; value: string; options: Record<string, unknown> };
 
 /**
- * `createCoinPayLoginHandler` / `createCoinPayCallbackHandler` lazily call
- * `require("next/server")`. `next` is an optional peer and is not installed
- * here, and vitest injects a real createRequire-based `require` into
- * transformed src files — so patch Node's loader (`Module._load`, the same
- * approach as tests/referrals.test.ts) to resolve `next/server` to a stub.
+ * The route handlers return plain Web `Response` objects (no NextResponse,
+ * no `next/server` dependency), so tests assert on the raw redirect: a 307
+ * status, a `Location` header, and `Set-Cookie` headers.
  */
-function stubNextServer() {
-  const redirects: Array<{ target: string; cookieSets: CookieSet[] }> = [];
-  const fakeNextServer = {
-    NextResponse: {
-      redirect(url: string | URL) {
-        const target = String(url);
-        const cookieSets: CookieSet[] = [];
-        const res = new Response(null, { status: 302 });
-        res.headers.set("location", target);
-        const withCookies = res as Response & {
-          cookies: { set(name: string, value: string, options?: Record<string, unknown>): void };
-        };
-        withCookies.cookies = {
-          set(name: string, value: string, options?: Record<string, unknown>) {
-            cookieSets.push({ name, value, options });
-          },
-        };
-        redirects.push({ target, cookieSets });
-        return withCookies;
-      },
-    },
-  };
 
-  const mod = Module as unknown as { _load: (...args: unknown[]) => unknown };
-  const original = mod._load;
-  mod._load = function (this: unknown, ...args: unknown[]): unknown {
-    if (args[0] === "next/server") return fakeNextServer;
-    return original.apply(this, args);
-  };
-  loadersToRestore.push(() => {
-    mod._load = original;
+/** Parse all `Set-Cookie` headers of a response into {name, value, options}. */
+function setCookiesOf(res: Response): CookieSet[] {
+  const raw =
+    typeof res.headers.getSetCookie === "function"
+      ? res.headers.getSetCookie()
+      : [res.headers.get("set-cookie") ?? ""].filter(Boolean);
+  return raw.map((h) => {
+    const [pair = "", ...attrs] = h.split(/;\s*/);
+    const eq = pair.indexOf("=");
+    const options: Record<string, unknown> = {};
+    for (const attr of attrs) {
+      const [k, v] = attr.split("=");
+      const key = (k ?? "").toLowerCase();
+      if (key === "max-age") options.maxAge = Number(v);
+      else if (key === "path") options.path = v;
+      else if (key === "httponly") options.httpOnly = true;
+      else if (key === "secure") options.secure = true;
+      else if (key === "samesite") options.sameSite = (v ?? "").toLowerCase();
+    }
+    return { name: pair.slice(0, eq), value: decodeURIComponent(pair.slice(eq + 1)), options };
   });
-  return { redirects };
 }
 
-const loadersToRestore: Array<() => void> = [];
+/** The redirect target of a handler response (fails the test when absent). */
+function locationOf(res: Response): string {
+  const location = res.headers.get("location");
+  expect(location, "expected a Location header").toBeTruthy();
+  return location as string;
+}
 
 /** A minimal structural NextRequest. */
 function makeRequest(url: string, cookies: Record<string, string> = {}) {
@@ -478,23 +469,21 @@ function makeRequest(url: string, cookies: Record<string, string> = {}) {
 
 describe("createCoinPayLoginHandler", () => {
   it("redirects to the authorize URL and sets the state cookie", async () => {
-    const { redirects } = stubNextServer();
     const GET = createCoinPayLoginHandler({
       clientId: "cid",
       redirectUri: "https://app.test/api/auth/coinpay/callback",
     });
     const res = await GET(makeRequest("https://app.test/api/auth/coinpay/login"));
-    expect(res.status).toBe(302);
+    expect(res.status).toBe(307);
 
-    expect(redirects).toHaveLength(1);
-    const target = new URL(redirects[0]!.target);
+    const target = new URL(locationOf(res));
     expect(target.origin).toBe("https://coinpayportal.com");
     expect(target.pathname).toBe("/api/oauth/authorize");
     expect(target.searchParams.get("client_id")).toBe("cid");
     expect(target.searchParams.get("code_challenge")).toBeTruthy();
     expect(target.searchParams.get("code_challenge_method")).toBe("S256");
 
-    const cookieSets = redirects[0]!.cookieSets;
+    const cookieSets = setCookiesOf(res);
     expect(cookieSets).toHaveLength(1);
     const set = cookieSets[0]!;
     expect(set.name).toBe(COINPAY_STATE_COOKIE);
@@ -505,15 +494,14 @@ describe("createCoinPayLoginHandler", () => {
   });
 
   it("merges extraState (object or function) into the state cookie", async () => {
-    const { redirects } = stubNextServer();
     const GET = createCoinPayLoginHandler({
       clientId: "cid",
       redirectUri: "https://app.test/cb",
       stateCookie: "my_state",
       extraState: (req) => ({ popup: new URL(req.url).searchParams.get("popup") === "1" }),
     });
-    await GET(makeRequest("https://app.test/api/auth/coinpay/login?popup=1"));
-    const set = redirects[0]!.cookieSets[0]!;
+    const res = await GET(makeRequest("https://app.test/api/auth/coinpay/login?popup=1"));
+    const set = setCookiesOf(res)[0]!;
     expect(set.name).toBe("my_state");
     expect(JSON.parse(set.value)).toMatchObject({ popup: true });
   });
@@ -528,35 +516,31 @@ describe("createCoinPayCallbackHandler", () => {
   const callbackUrl = "https://app.test/api/auth/coinpay/callback";
 
   it("redirects to the error target when the provider returns an error", async () => {
-    const { redirects } = stubNextServer();
     const GET = createCoinPayCallbackHandler({ ...baseOpts, onSuccess: vi.fn() });
-    await GET(makeRequest(`${callbackUrl}?error=access_denied`));
-    expect(redirects[0]!.target).toBe("https://app.test/auth?error=coinpay_denied");
+    const res = await GET(makeRequest(`${callbackUrl}?error=access_denied`));
+    expect(locationOf(res)).toBe("https://app.test/auth?error=coinpay_denied");
   });
 
   it("redirects with coinpay_missing_code when no code is present", async () => {
-    const { redirects } = stubNextServer();
     const GET = createCoinPayCallbackHandler({ ...baseOpts, onSuccess: vi.fn() });
-    await GET(makeRequest(callbackUrl));
-    expect(redirects[0]!.target).toBe("https://app.test/auth?error=coinpay_missing_code");
+    const res = await GET(makeRequest(callbackUrl));
+    expect(locationOf(res)).toBe("https://app.test/auth?error=coinpay_missing_code");
   });
 
   it("redirects with coinpay_state_mismatch on bad or missing state", async () => {
-    const { redirects } = stubNextServer();
     const GET = createCoinPayCallbackHandler({ ...baseOpts, onSuccess: vi.fn() });
     const cookie = JSON.stringify({ state: "stored", codeVerifier: "v" });
-    await GET(
+    const res1 = await GET(
       makeRequest(`${callbackUrl}?code=abc&state=other`, { [COINPAY_STATE_COOKIE]: cookie }),
     );
-    expect(redirects[0]!.target).toBe("https://app.test/auth?error=coinpay_state_mismatch");
+    expect(locationOf(res1)).toBe("https://app.test/auth?error=coinpay_state_mismatch");
 
     // No cookie at all → same failure.
-    await GET(makeRequest(`${callbackUrl}?code=abc&state=stored`));
-    expect(redirects[1]!.target).toBe("https://app.test/auth?error=coinpay_state_mismatch");
+    const res2 = await GET(makeRequest(`${callbackUrl}?code=abc&state=stored`));
+    expect(locationOf(res2)).toBe("https://app.test/auth?error=coinpay_state_mismatch");
   });
 
   it("exchanges the code, fetches userinfo, and redirects via onSuccess", async () => {
-    const { redirects } = stubNextServer();
     const fetchMock = vi
       .fn()
       .mockResolvedValueOnce(jsonResponse({ access_token: "at", refresh_token: "rt" }))
@@ -568,8 +552,8 @@ describe("createCoinPayCallbackHandler", () => {
     const res = await GET(
       makeRequest(`${callbackUrl}?code=abc&state=s1`, { [COINPAY_STATE_COOKIE]: cookie }),
     );
-    expect(res.status).toBe(302);
-    expect(redirects[0]!.target).toBe("https://app.test/chat");
+    expect(res.status).toBe(307);
+    expect(locationOf(res)).toBe("https://app.test/chat");
 
     // Token exchange carried the PKCE verifier + client secret.
     const [tokenUrl, tokenInit] = callOf(fetchMock, 0);
@@ -590,12 +574,11 @@ describe("createCoinPayCallbackHandler", () => {
     expect(ctx.cookie["popup"]).toBe(true);
 
     // The state cookie was consumed (cleared on the redirect response).
-    const cleared = redirects[0]!.cookieSets.find((c) => c.name === COINPAY_STATE_COOKIE);
+    const cleared = setCookiesOf(res).find((c) => c.name === COINPAY_STATE_COOKIE);
     expect(cleared?.options?.["maxAge"]).toBe(0);
   });
 
   it("redirects to successUrl when onSuccess returns void", async () => {
-    const { redirects } = stubNextServer();
     const fetchMock = vi
       .fn()
       .mockResolvedValueOnce(jsonResponse({ access_token: "at" }))
@@ -607,12 +590,13 @@ describe("createCoinPayCallbackHandler", () => {
       onSuccess: () => undefined,
     });
     const cookie = JSON.stringify({ state: "s1" });
-    await GET(makeRequest(`${callbackUrl}?code=abc&state=s1`, { [COINPAY_STATE_COOKIE]: cookie }));
-    expect(redirects[0]!.target).toBe("https://app.test/dashboard");
+    const res = await GET(
+      makeRequest(`${callbackUrl}?code=abc&state=s1`, { [COINPAY_STATE_COOKIE]: cookie }),
+    );
+    expect(locationOf(res)).toBe("https://app.test/dashboard");
   });
 
   it("returns an onSuccess-provided Response as-is and clears the cookie on it", async () => {
-    stubNextServer();
     const fetchMock = vi
       .fn()
       .mockResolvedValueOnce(jsonResponse({ access_token: "at" }))
@@ -635,7 +619,6 @@ describe("createCoinPayCallbackHandler", () => {
   });
 
   it("redirects with coinpay_login_failed when the exchange or onSuccess throws", async () => {
-    const { redirects } = stubNextServer();
     const badExchange = vi.fn().mockResolvedValue(jsonResponse({}, 400));
     const GET = createCoinPayCallbackHandler({
       ...baseOpts,
@@ -643,8 +626,10 @@ describe("createCoinPayCallbackHandler", () => {
       onSuccess: vi.fn(),
     });
     const cookie = JSON.stringify({ state: "s1" });
-    await GET(makeRequest(`${callbackUrl}?code=abc&state=s1`, { [COINPAY_STATE_COOKIE]: cookie }));
-    expect(redirects[0]!.target).toBe("https://app.test/auth?error=coinpay_login_failed");
+    const res1 = await GET(
+      makeRequest(`${callbackUrl}?code=abc&state=s1`, { [COINPAY_STATE_COOKIE]: cookie }),
+    );
+    expect(locationOf(res1)).toBe("https://app.test/auth?error=coinpay_login_failed");
 
     const fetchMock = vi
       .fn()
@@ -657,28 +642,27 @@ describe("createCoinPayCallbackHandler", () => {
         throw new Error("db down");
       },
     });
-    await GET2(
+    const res2 = await GET2(
       makeRequest(`${callbackUrl}?code=abc&state=s1`, { [COINPAY_STATE_COOKIE]: cookie }),
     );
-    expect(redirects[1]!.target).toBe("https://app.test/auth?error=coinpay_login_failed");
+    expect(locationOf(res2)).toBe("https://app.test/auth?error=coinpay_login_failed");
   });
 
   it("honors a custom errorUrl template and an onError override", async () => {
-    const { redirects } = stubNextServer();
     const GET = createCoinPayCallbackHandler({
       ...baseOpts,
       errorUrl: "https://app.test/login?err={code}",
       onSuccess: vi.fn(),
     });
-    await GET(makeRequest(callbackUrl));
-    expect(redirects[0]!.target).toBe("https://app.test/login?err=coinpay_missing_code");
+    const res1 = await GET(makeRequest(callbackUrl));
+    expect(locationOf(res1)).toBe("https://app.test/login?err=coinpay_missing_code");
 
     const GET2 = createCoinPayCallbackHandler({
       ...baseOpts,
       onSuccess: vi.fn(),
       onError: (code) => `/oops/${code}`,
     });
-    await GET2(makeRequest(callbackUrl));
-    expect(redirects[1]!.target).toBe("https://app.test/oops/coinpay_missing_code");
+    const res2 = await GET2(makeRequest(callbackUrl));
+    expect(locationOf(res2)).toBe("https://app.test/oops/coinpay_missing_code");
   });
 });

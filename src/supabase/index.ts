@@ -267,10 +267,12 @@ type NextServerModule = {
  * breaks Next's build). Only loaded when `updateSession` actually runs.
  */
 async function loadNextServer(): Promise<NextServerModule> {
-  // Typed as `string` so tsc/dts doesn't resolve next/server's types (next is
-  // an optional peer dep, not installed here); the runtime import still works.
-  const specifier: string = "next/server";
-  return (await import(specifier)) as NextServerModule;
+  // `next` is an optional peer dep, not installed here — the ts-expect-error
+  // stops tsc/dts from resolving next/server's types while the runtime import
+  // still works wherever Next is present. The specifier MUST stay a literal:
+  // bundlers (webpack/turbopack) reject non-literal dynamic imports.
+  // @ts-expect-error -- next is an optional peer dependency, not installed here
+  return (await import("next/server")) as NextServerModule;
 }
 
 /**

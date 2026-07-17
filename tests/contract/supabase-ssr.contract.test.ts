@@ -19,12 +19,11 @@
  *     persist via setItems, then fire TOKEN_REFRESHED, which is the event that
  *     makes ssr flush our setAll — the exact flow updateSession exists for.
  *
- * `next/server` is not installed (optional peer), so updateSession's lazy
- * `require("next/server")` is intercepted via Node's module loader — the same
- * technique tests/supabase.test.ts uses. Everything else is real.
+ * `next/server` is not installed (optional peer), so updateSession's dynamic
+ * `import("next/server")` resolves to the shared stub in
+ * tests/stubs/next-server.ts via the vitest alias. Everything else is real.
  */
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import Module from "node:module";
 import { readFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import {
@@ -34,6 +33,7 @@ import {
   type SupabaseCookieStore,
   type NextRequestLike,
 } from "../../src/supabase/index.js";
+import { FakeNextResponse } from "../stubs/next-server.js";
 
 // ---------------------------------------------------------------------------
 // Constants pinned from the installed @supabase/ssr + @supabase/supabase-js
@@ -115,7 +115,6 @@ beforeEach(() => {
 afterEach(() => {
   vi.unstubAllGlobals();
   vi.clearAllMocks();
-  restoreModuleLoad();
 });
 
 // ---------------------------------------------------------------------------
@@ -140,40 +139,12 @@ function makeCookieStore(initial: { name: string; value: string }[] = []): Supab
 }
 
 // ---------------------------------------------------------------------------
-// next/server interception (updateSession lazy-requires it)
+// next/server stub (shared; resolved via the vitest alias)
 // ---------------------------------------------------------------------------
 
-class FakeNextResponse {
-  static instances: FakeNextResponse[] = [];
-  cookies = { set: vi.fn() };
-  init: unknown;
-  static next(init?: unknown): FakeNextResponse {
-    const r = new FakeNextResponse();
-    r.init = init;
-    FakeNextResponse.instances.push(r);
-    return r;
-  }
-}
-
-type ModuleLoad = (request: string, parent: unknown, isMain: boolean) => unknown;
-const internalModule = Module as unknown as { _load: ModuleLoad };
-let originalLoad: ModuleLoad | null = null;
-
+/** Reset the shared stub before exercising updateSession. */
 function stubNextServer(): void {
-  FakeNextResponse.instances = [];
-  if (originalLoad) return;
-  const original = internalModule._load;
-  originalLoad = original;
-  internalModule._load = function (this: unknown, request: string, parent: unknown, isMain: boolean) {
-    if (request === "next/server") return { NextResponse: FakeNextResponse };
-    return original.call(this, request, parent, isMain);
-  };
-}
-
-function restoreModuleLoad(): void {
-  if (!originalLoad) return;
-  internalModule._load = originalLoad;
-  originalLoad = null;
+  FakeNextResponse.reset();
 }
 
 function makeRequest(initial: { name: string; value: string }[] = []): NextRequestLike & {

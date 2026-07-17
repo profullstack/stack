@@ -22,8 +22,10 @@
  *     },
  *   });
  *
- * `next/server` is required lazily (like `@profullstack/referrals/next`), so
- * importing this module never breaks non-Next environments.
+ * Handlers return plain Web `Response` objects (never NextResponse), so the
+ * module has zero Next dependency and stays bundler-proof — a lazy
+ * require()/dynamic import of `next/server` breaks Next's turbopack build
+ * when a route handler is evaluated at build time.
  */
 
 import {
@@ -44,24 +46,34 @@ type CoinPayNextRequest = {
   cookies: { get(name: string): { value: string } | undefined };
 };
 
-/** A Response carrying Next's cookies API. */
+/** A Response carrying Next's cookies API (for app-supplied NextResponses). */
 type ResponseWithCookies = Response & {
   cookies: { set(name: string, value: string, options?: Record<string, unknown>): void };
 };
 
-type NextResponseLike = {
-  redirect(url: string | URL, init?: number | ResponseInit): ResponseWithCookies;
-};
+/**
+ * A 307 redirect as a plain Web Response. 307 matches NextResponse.redirect's
+ * default status, and the App Router accepts a standard Response from route
+ * handlers — no `next/server` import needed.
+ */
+function redirectResponse(url: string | URL): Response {
+  return new Response(null, { status: 307, headers: { Location: String(url) } });
+}
 
-// We load NextResponse lazily via dynamic import (not require) so the package
-// works in ESM builds and doesn't pull in `next` for non-Next consumers (core
-// client/webhook/oauth work without Next). Only loaded when a handler runs.
-async function nextResponse(): Promise<NextResponseLike> {
-  // Typed as `string` so tsc/dts doesn't resolve next/server's types (next is
-  // an optional peer dep, not installed here); the runtime import still works.
-  const specifier: string = "next/server";
-  const { NextResponse } = (await import(specifier)) as { NextResponse: NextResponseLike };
-  return NextResponse;
+/**
+ * Serialize a `Set-Cookie` header value with the same wire format as Next's
+ * `response.cookies.set()` (the cookie package's defaults): the value is
+ * percent-encoded, which Next's RequestCookies decodes symmetrically.
+ */
+function serializeCookie(name: string, value: string, options: Record<string, unknown>): string {
+  let header = `${name}=${encodeURIComponent(value)}; Path=${options["path"] ?? "/"}`;
+  if (options["httpOnly"]) header += "; HttpOnly";
+  if (options["sameSite"]) {
+    header += `; SameSite=${String(options["sameSite"]).replace(/^\w/, (c) => c.toUpperCase())}`;
+  }
+  if (options["maxAge"] !== undefined) header += `; Max-Age=${options["maxAge"]}`;
+  if (options["secure"]) header += "; Secure";
+  return header;
 }
 
 /** Default lifetime of the state cookie — only needs to survive the round-trip. */
@@ -98,10 +110,7 @@ function clearStateCookie(res: Response, name: string, secure: boolean): void {
     withCookies.cookies.set(name, "", stateCookieOptions(secure, 0));
     return;
   }
-  res.headers.append(
-    "set-cookie",
-    `${name}=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0${secure ? "; Secure" : ""}`,
-  );
+  res.headers.append("set-cookie", serializeCookie(name, "", stateCookieOptions(secure, 0)));
 }
 
 /** Options for {@link createCoinPayLoginHandler}. */
@@ -151,7 +160,6 @@ export function createCoinPayLoginHandler(
   } = options;
 
   return async function GET(request: CoinPayNextRequest): Promise<Response> {
-    const NR = await nextResponse();
     const secure = secureCookies ?? isSecureDefault();
     const state = generateCoinPayState();
     const { codeVerifier, codeChallenge } = generateCoinPayPkcePair();
@@ -166,11 +174,14 @@ export function createCoinPayLoginHandler(
       codeChallenge,
     });
 
-    const response = NR.redirect(authorizeUrl);
-    response.cookies.set(
-      stateCookie,
-      JSON.stringify({ state, codeVerifier, ...extra }),
-      stateCookieOptions(secure, stateCookieMaxAgeSeconds),
+    const response = redirectResponse(authorizeUrl);
+    response.headers.append(
+      "set-cookie",
+      serializeCookie(
+        stateCookie,
+        JSON.stringify({ state, codeVerifier, ...extra }),
+        stateCookieOptions(secure, stateCookieMaxAgeSeconds),
+      ),
     );
     return response;
   };
@@ -278,7 +289,6 @@ export function createCoinPayCallbackHandler(
   }
 
   return async function GET(request: CoinPayNextRequest): Promise<Response> {
-    const NR = await nextResponse();
     const secure = secureCookies ?? isSecureDefault();
     const requestUrl = new URL(request.url);
     const appOrigin = (appOriginOpt ?? requestUrl.origin).replace(/\/+$/, "");
@@ -291,7 +301,7 @@ export function createCoinPayCallbackHandler(
       }
       const target = result instanceof URL ? result.toString() : (result ?? fallbackTarget);
       const absolute = target.startsWith("/") ? `${appOrigin}${target}` : target;
-      const res = NR.redirect(absolute);
+      const res = redirectResponse(absolute);
       clearStateCookie(res, stateCookie, secure);
       return res;
     }

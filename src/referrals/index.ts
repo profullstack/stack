@@ -257,25 +257,16 @@ export interface ReferralsRouteRequest {
   json(): Promise<unknown>;
 }
 
-type NextResponseFactory = {
-  json(data: unknown, init?: ResponseInit): Response;
-};
-
-// We load NextResponse lazily via dynamic import (NOT require) so the module
-// works in ESM builds — bundlers like Next reject a require() shim with
-// "dynamic usage of require is not supported" — and still doesn't pull in Next
-// for non-Next consumers: it's only imported when a route handler actually runs.
-let _nextResponse: NextResponseFactory | undefined;
-async function nextResponse(): Promise<NextResponseFactory> {
-  if (!_nextResponse) {
-    // `next` is an optional peer dep and isn't installed in this package, so type
-    // the specifier as `string` — that stops tsc/dts from resolving next/server's
-    // types while the runtime import still works wherever Next is present.
-    const specifier: string = "next/server";
-    const mod = (await import(specifier)) as { NextResponse: NextResponseFactory };
-    _nextResponse = mod.NextResponse;
-  }
-  return _nextResponse;
+// A plain `Response` — never NextResponse — so this module has zero Next
+// dependency and stays bundler-proof (any lazy require()/dynamic import of
+// next/server breaks Next's turbopack build when a route handler is evaluated
+// at build time). The App Router accepts a standard Response interchangeably
+// with NextResponse.json() for JSON responses.
+function jsonResponse(body: unknown, init?: ResponseInit): Response {
+  return new Response(JSON.stringify(body), {
+    status: init?.status ?? 200,
+    headers: { "content-type": "application/json" },
+  });
 }
 
 /** Configuration for {@link createReferralsRouteHandler}. */
@@ -323,51 +314,49 @@ export function createReferralsRouteHandler(options: ReferralsRouteHandlerOption
   const { store, getUserId, split = DEFAULT_SPLIT, param = "ref" } = options;
 
   async function GET(req: ReferralsRouteRequest): Promise<Response> {
-    const NR = await nextResponse();
     const { searchParams } = new URL(req.url);
     const action = searchParams.get("action");
 
     if (action === "validate") {
       const code = searchParams.get(param);
-      if (!code) return NR.json({ error: "Missing ref" }, { status: 400 });
+      if (!code) return jsonResponse({ error: "Missing ref" }, { status: 400 });
       const record = await validateCode(code, store);
-      return NR.json({ valid: !!record, code: record ?? null });
+      return jsonResponse({ valid: !!record, code: record ?? null });
     }
 
     if (action === "myusages" && getUserId) {
       const userId = await getUserId(req);
-      if (!userId) return NR.json({ error: "Unauthorized" }, { status: 401 });
+      if (!userId) return jsonResponse({ error: "Unauthorized" }, { status: 401 });
       const usages = await store.getUsagesByAffiliate(userId);
-      return NR.json({ usages });
+      return jsonResponse({ usages });
     }
 
-    return NR.json({ error: "Unknown action" }, { status: 400 });
+    return jsonResponse({ error: "Unknown action" }, { status: 400 });
   }
 
   async function POST(req: ReferralsRouteRequest): Promise<Response> {
-    const NR = await nextResponse();
     const body = (await req.json()) as Record<string, unknown>;
     const action = body["action"];
 
     if (action === "create") {
       if (getUserId) {
         const userId = await getUserId(req);
-        if (!userId) return NR.json({ error: "Unauthorized" }, { status: 401 });
+        if (!userId) return jsonResponse({ error: "Unauthorized" }, { status: 401 });
         const code = await createCode(userId, store);
-        return NR.json({ code });
+        return jsonResponse({ code });
       }
       const ownerId = typeof body["ownerId"] === "string" ? body["ownerId"] : null;
-      if (!ownerId) return NR.json({ error: "Missing ownerId" }, { status: 400 });
+      if (!ownerId) return jsonResponse({ error: "Missing ownerId" }, { status: 400 });
       const code = await createCode(ownerId, store);
-      return NR.json({ code });
+      return jsonResponse({ code });
     }
 
     if (action === "apply" && getUserId) {
       const userId = await getUserId(req);
-      if (!userId) return NR.json({ error: "Unauthorized" }, { status: 401 });
+      if (!userId) return jsonResponse({ error: "Unauthorized" }, { status: 401 });
       const code = typeof body["code"] === "string" ? body["code"] : null;
       const amount = typeof body["amount"] === "number" ? body["amount"] : null;
-      if (!code || !amount) return NR.json({ error: "Missing code or amount" }, { status: 400 });
+      if (!code || !amount) return jsonResponse({ error: "Missing code or amount" }, { status: 400 });
       const usage = await applyReferral({
         code,
         newUserId: userId,
@@ -375,10 +364,10 @@ export function createReferralsRouteHandler(options: ReferralsRouteHandlerOption
         store,
         split,
       });
-      return NR.json({ usage });
+      return jsonResponse({ usage });
     }
 
-    return NR.json({ error: "Unknown action" }, { status: 400 });
+    return jsonResponse({ error: "Unknown action" }, { status: 400 });
   }
 
   return { GET, POST };

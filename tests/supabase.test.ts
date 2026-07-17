@@ -1,12 +1,11 @@
 /**
  * Tests for @profullstack/stack/supabase.
  *
- * `@supabase/ssr` is mocked (no network, no DOM). `next/server` is exercised
- * through a stubbed global `require`, matching the lazy-require pattern the
- * module uses in production.
+ * `@supabase/ssr` is mocked (no network, no DOM). `next/server` resolves to
+ * the shared stub in tests/stubs/next-server.ts via the vitest alias — the
+ * module under test loads it through a literal dynamic import().
  */
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import Module from "node:module";
 import {
   createBrowserSupabase,
   createServerSupabase,
@@ -14,8 +13,8 @@ import {
   resolveSupabaseConfig,
   type SupabaseCookieStore,
   type NextRequestLike,
-  type NextResponseLike,
 } from "../src/supabase/index.js";
+import { FakeNextResponse } from "./stubs/next-server.js";
 
 const URL_ENV = "NEXT_PUBLIC_SUPABASE_URL";
 const KEY_ENV = "NEXT_PUBLIC_SUPABASE_ANON_KEY";
@@ -80,7 +79,6 @@ afterEach(() => {
   process.env = { ...ORIGINAL_ENV };
   vi.clearAllMocks();
   vi.unstubAllGlobals();
-  restoreModuleLoad();
 });
 
 function makeCookieStore(
@@ -223,45 +221,9 @@ describe("createServerSupabase", () => {
   });
 });
 
-/** Minimal NextResponse stand-in recording cookie writes. */
-class FakeNextResponse implements NextResponseLike {
-  static instances: FakeNextResponse[] = [];
-  cookies = { set: vi.fn() };
-  init: unknown;
-  static next(init?: unknown): FakeNextResponse {
-    const r = new FakeNextResponse();
-    r.init = init;
-    FakeNextResponse.instances.push(r);
-    return r;
-  }
-}
-
+/** Reset the shared next/server stub before exercising updateSession. */
 function stubNextServer() {
-  FakeNextResponse.instances = [];
-  // The module under test lazy-loads `next/server` via a bare `require()`,
-  // which vitest's module runner turns into a real Node require — so we
-  // intercept Node's module loader instead of stubbing a global.
-  patchModuleLoad();
-}
-
-type ModuleLoad = (request: string, parent: unknown, isMain: boolean) => unknown;
-const internalModule = Module as unknown as { _load: ModuleLoad };
-let originalLoad: ModuleLoad | null = null;
-
-function patchModuleLoad() {
-  if (originalLoad) return; // already patched
-  const original = internalModule._load;
-  originalLoad = original;
-  internalModule._load = function (this: unknown, request: string, parent: unknown, isMain: boolean) {
-    if (request === "next/server") return { NextResponse: FakeNextResponse };
-    return original.call(this, request, parent, isMain);
-  };
-}
-
-function restoreModuleLoad() {
-  if (!originalLoad) return;
-  internalModule._load = originalLoad;
-  originalLoad = null;
+  FakeNextResponse.reset();
 }
 
 function makeRequest(

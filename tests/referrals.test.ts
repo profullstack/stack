@@ -21,9 +21,9 @@ import type { ReferralCode, ReferralStore, ReferralUsage } from "../src/referral
 /* -------------------------------------------------------------------------- */
 
 /**
- * `createReferralsRouteHandler` / `makeReferralHandlers` lazily call
- * `require("next/server")`. `next` is an optional peer and is not installed
- * here, so two interception layers are needed:
+ * `makeReferralHandlers` (re-exported from the prebuilt `@profullstack/referrals`
+ * dist) lazily calls `require("next/server")`. `next` is an optional peer and
+ * is not installed here, so two interception layers are needed:
  *
  * 1. `globalThis.require` — used by the prebuilt `@profullstack/referrals`
  *    dist, whose tsup `__require` shim falls back to the global when no
@@ -31,6 +31,9 @@ import type { ReferralCode, ReferralStore, ReferralUsage } from "../src/referral
  * 2. `Module._load` — vitest injects a real createRequire-based `require`
  *    into transformed src files, which would do genuine Node resolution and
  *    fail. Patching Node's loader makes `next/server` resolve to the stub.
+ *
+ * `createReferralsRouteHandler` needs no stub: it returns plain Web
+ * `Response` objects and never touches `next/server`.
  */
 function installNextServerStubs(): void {
   const fakeNextServer = {
