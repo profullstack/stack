@@ -333,6 +333,7 @@ describe("generateCoinPayState / generateCoinPayPkcePair / validateCoinPayState"
     expect(validateCoinPayState(s, s)).toBe(true);
     expect(validateCoinPayState("aaaa", "bbbb")).toBe(false);
     expect(validateCoinPayState("abc", "abcd")).toBe(false);
+    expect(validateCoinPayState("é", "a")).toBe(false);
     expect(validateCoinPayState("", "x")).toBe(false);
     expect(validateCoinPayState("x", null)).toBe(false);
     expect(validateCoinPayState(undefined, undefined)).toBe(false);
