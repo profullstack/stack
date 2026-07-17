@@ -261,12 +261,21 @@ type NextResponseFactory = {
   json(data: unknown, init?: ResponseInit): Response;
 };
 
-// We import NextResponse lazily so the module doesn't break in
-// non-Next environments (the client works without Next).
-function nextResponse(): NextResponseFactory {
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const { NextResponse } = require("next/server") as { NextResponse: NextResponseFactory };
-  return NextResponse;
+// We load NextResponse lazily via dynamic import (NOT require) so the module
+// works in ESM builds — bundlers like Next reject a require() shim with
+// "dynamic usage of require is not supported" — and still doesn't pull in Next
+// for non-Next consumers: it's only imported when a route handler actually runs.
+let _nextResponse: NextResponseFactory | undefined;
+async function nextResponse(): Promise<NextResponseFactory> {
+  if (!_nextResponse) {
+    // `next` is an optional peer dep and isn't installed in this package, so type
+    // the specifier as `string` — that stops tsc/dts from resolving next/server's
+    // types while the runtime import still works wherever Next is present.
+    const specifier: string = "next/server";
+    const mod = (await import(specifier)) as { NextResponse: NextResponseFactory };
+    _nextResponse = mod.NextResponse;
+  }
+  return _nextResponse;
 }
 
 /** Configuration for {@link createReferralsRouteHandler}. */
@@ -312,9 +321,9 @@ export function createReferralsRouteHandler(options: ReferralsRouteHandlerOption
   POST: (req: ReferralsRouteRequest) => Promise<Response>;
 } {
   const { store, getUserId, split = DEFAULT_SPLIT, param = "ref" } = options;
-  const NR = nextResponse();
 
   async function GET(req: ReferralsRouteRequest): Promise<Response> {
+    const NR = await nextResponse();
     const { searchParams } = new URL(req.url);
     const action = searchParams.get("action");
 
@@ -336,6 +345,7 @@ export function createReferralsRouteHandler(options: ReferralsRouteHandlerOption
   }
 
   async function POST(req: ReferralsRouteRequest): Promise<Response> {
+    const NR = await nextResponse();
     const body = (await req.json()) as Record<string, unknown>;
     const action = body["action"];
 
