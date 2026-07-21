@@ -96,10 +96,12 @@ export function validateCoinPayState(
   if (!received || !expected || typeof received !== "string" || typeof expected !== "string") {
     return false;
   }
-  if (received.length !== expected.length) {
-    return false;
-  }
-  return timingSafeEqual(Buffer.from(received), Buffer.from(expected));
+  const receivedBytes = Buffer.from(received);
+  const expectedBytes = Buffer.from(expected);
+  return (
+    receivedBytes.length === expectedBytes.length &&
+    timingSafeEqual(receivedBytes, expectedBytes)
+  );
 }
 
 /** Options for {@link getCoinPayAuthorizeUrl}. */
