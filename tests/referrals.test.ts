@@ -567,6 +567,35 @@ describe("createReferralsRouteHandler (authenticated)", () => {
     expect(await missing.json()).toEqual({ error: "Missing code or amount" });
   });
 
+  it.each([-100, 0, 1.5, Number.MAX_SAFE_INTEGER + 1, "100", null])(
+    "POST apply rejects invalid cent amount %j without saving a usage",
+    async (amount) => {
+      const { store, usages } = makeMemoryStore();
+      await store.saveCode({
+        code: "ABC123",
+        ownerId: "user-1",
+        createdAt: new Date(),
+        expiresAt: null,
+      });
+      const { POST } = createReferralsRouteHandler({
+        store,
+        getUserId: () => "user-2",
+      });
+
+      const res = await POST(
+        makeReq("https://app.test/api/referrals", {
+          action: "apply",
+          code: "ABC123",
+          amount,
+        })
+      );
+
+      expect(res.status).toBe(400);
+      expect(await res.json()).toEqual({ error: "Missing code or amount" });
+      expect(usages).toHaveLength(0);
+    }
+  );
+
   it("POST apply records the usage with the default 60/20 split", async () => {
     const { store, usages } = makeMemoryStore();
     await store.saveCode({
