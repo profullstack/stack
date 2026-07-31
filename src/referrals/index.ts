@@ -355,8 +355,16 @@ export function createReferralsRouteHandler(options: ReferralsRouteHandlerOption
       const userId = await getUserId(req);
       if (!userId) return jsonResponse({ error: "Unauthorized" }, { status: 401 });
       const code = typeof body["code"] === "string" ? body["code"] : null;
-      const amount = typeof body["amount"] === "number" ? body["amount"] : null;
-      if (!code || !amount) return jsonResponse({ error: "Missing code or amount" }, { status: 400 });
+      const rawAmount = body["amount"];
+      const amount =
+        typeof rawAmount === "number" &&
+        Number.isSafeInteger(rawAmount) &&
+        rawAmount > 0
+          ? rawAmount
+          : null;
+      if (!code || amount === null) {
+        return jsonResponse({ error: "Missing code or amount" }, { status: 400 });
+      }
       const usage = await applyReferral({
         code,
         newUserId: userId,
