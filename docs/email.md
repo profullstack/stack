@@ -50,7 +50,7 @@ with 500 in production — override with `onMissingEmailer`.
 
 Returns the `POST` handler to export from `app/api/contact/route.ts`.
 
-Request flow: parse JSON → `mapBody` → honeypot → `verify` hook → captcha →
+Request flow: parse JSON → `mapBody` → honeypot → guard → `verify` hook → captcha →
 required-field validation → email-format validation → `persist` → send
 notification → send confirmation → success response. Any unexpected throw
 (including a `persist` failure) returns the `error` response (500).
@@ -66,6 +66,7 @@ notification → send confirmation → success response. Any unexpected throw
 | `send` | `(mail: SendOptions) => Promise<SendResult>` | — | Fully custom transport (e.g. a Mailgun adapter); replaces the Emailer for notification and confirmation. |
 | `requiredFields` | `string[]` | `["name","email","message"]` | Fields that must be non-empty strings. First missing field fails with `"{Label} is required"` (400). |
 | `honeypot` | `string \| false` | `"website"` | Honeypot field; bots filling it get a fake success. `false` disables. |
+| `guard` | `FormGuardOptions \| FormGuard` | — | Proof-of-render token, fill-time floor, per-IP rate limit and spam scoring. See below. |
 | `validateEmail` | `boolean` | `true` | Validate email format (`/^[^\s@]+@[^\s@]+\.[^\s@]+$/`), failing with `"Valid email is required"` (400). |
 | `mapBody` | `(body) => body` | — | Preprocess the parsed body before all checks (e.g. combine `firstName`/`lastName`). |
 | `subject` | `string \| (submission) => string` | `"New contact form submission from {name}"` | Subject of the notification email. |
@@ -95,8 +96,9 @@ notification → send confirmation → success response. Any unexpected throw
 
 #### Response shapes
 
-The five responses a route can return (`ContactRouteResponses`): `honeypot`,
-`invalid`, `success`, `sendFailed`, `error`. Each is either
+The responses a route can return (`ContactRouteResponses`): `honeypot`,
+`invalid`, `success`, `sendFailed`, `error`, and — when a `guard` is
+configured — `retry` and `limited`. Each is either
 `{ body, status? }` or `(ctx: { error?, messageId?, id? }) => { body, status? }`.
 
 Presets:
@@ -108,6 +110,78 @@ Presets:
 | success | `{ message: "Message received! We'll be in touch." }` 200 | `{ success: true, messageId?, id? }` 200 | `{ ok: true, id? }` 200 |
 | sendFailed | `{ message: "Something went wrong." }` 500 | `{ error: "Failed to send message. Please try again later." }` 500 | `{ ok: false, error: "Failed to send email" }` 500 |
 | error | `{ message: "Something went wrong." }` 500 | `{ error: "An unexpected error occurred" }` 500 | `{ ok: false, error: err }` 500 |
+| retry | `{ message: "That took too long…" }` 400 | `{ error: "That took too long…" }` 400 | `{ ok: false, error: … }` 400 |
+| limited | `{ message: "Too many messages…" }` 429 | `{ error: "Too many messages…" }` 429 | `{ ok: false, error: … }` 429 |
+
+### `createContactGuard(options: FormGuardOptions): FormGuard`
+
+Why this exists: **a honeypot only catches a bot that renders your page.**
+Most contact-form spam POSTs straight at the handler, so the hidden field
+is *absent from the body rather than filled* and the honeypot check
+passes. The submission that prompted this arrived at a form whose
+honeypot was working correctly.
+
+The guard requires a signed token minted when the form renders. A request
+that never loaded the page has no token and goes nowhere. The token also
+carries its issue time, which gives a fill-time floor for free.
+
+| Layer | Catches | On failure |
+| --- | --- | --- |
+| Proof-of-render token | Direct-to-endpoint bots | `honeypot` response — a fake success |
+| Fill-time floor (3s) | Instant submits | `retry` response, 400 |
+| Honeypot | Bots that do render | `honeypot` response |
+| Rate limit (5/hr/IP) | Floods | `limited` response, 429 |
+| Content scoring | Low-effort lead bait | **delivered**, subject tagged `[spam? N]` |
+
+Only the first four block. Content scoring can tag a message but never
+drop one — every signal it reads has an innocent explanation.
+
+The page and the route must share one guard, or a `binding`/field-name
+mismatch rejects every genuine submission silently:
+
+```ts
+// lib/contact-guard.ts
+import { createContactGuard } from "@profullstack/stack/email";
+
+export const contactGuard = createContactGuard({
+  secret: process.env.FORM_GUARD_SECRET ?? process.env.RESEND_API_KEY!,
+  binding: "contact",
+  brandTerms: ["acme corp"],
+  rateLimit: { max: 5, windowMs: 60 * 60 * 1000 },
+});
+```
+
+```tsx
+// app/contact/page.tsx — a server component
+export const dynamic = "force-dynamic"; // a cached page = a stale token
+
+const token = await contactGuard.issue();
+const fields = contactGuard.fields(token);
+return <ContactForm tokenName={fields.token.name} token={token} honeypotName={fields.honeypot.name} />;
+```
+
+```ts
+// app/api/contact/route.ts
+export const POST = createContactRoute({ to: "hello@example.com", guard: contactGuard });
+```
+
+The client form sends `[tokenName]: token` in its JSON body alongside the
+real fields.
+
+**The secret** never reaches the browser — only the signature does — so it
+need not be a managed secret, but it must be identical across every
+instance serving the form. Falling back to `RESEND_API_KEY` means no new
+env var is required. Rotating it invalidates tokens on open pages; those
+senders get `retry`, not a lost message.
+
+**Rolling out safely.** Ship with `requireToken: false` first: everything
+is scored and annotated, nothing is blocked. Watch the tagged mail for a
+few days, then flip it on.
+
+Delivered mail gains a provenance block naming the submitter's IP,
+user-agent, fill time and which signals fired — none of which is in the
+headers, because the notification is sent by you to you and authenticates
+either way.
 
 ### `escapeHtml(value: string): string`
 

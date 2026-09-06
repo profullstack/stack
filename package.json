@@ -1,6 +1,6 @@
 {
   "name": "@profullstack/stack",
-  "version": "0.1.3",
+  "version": "0.2.0",
   "description": "The Profullstack open source stack — shared modules for Next.js/Node apps: referrals, email, supabase, feedback widget, coinpay, crawlproof.",
   "license": "MIT",
   "type": "module",
@@ -89,6 +89,7 @@
   },
   "dependencies": {
     "@profullstack/emailer": "^1.0.1",
+    "@profullstack/form-guard": "^0.1.1",
     "@profullstack/referrals": "^0.1.0"
   },
   "peerDependencies": {
