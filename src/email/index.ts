@@ -15,6 +15,13 @@
  * input, sends the notification through @profullstack/emailer (Resend),
  * and returns the JSON response shape your frontend already expects.
  *
+ * A honeypot only catches a bot that renders your page, and most
+ * contact-form spam does not — it POSTs straight at the handler, so the
+ * hidden field is absent from the body rather than filled and the check
+ * passes. Pass `guard` to require a signed proof-of-render token that a
+ * request which never loaded the form cannot have. See
+ * {@link createContactGuard}.
+ *
  * Everything an app needs for email is re-exported here, so apps only
  * ever depend on "@profullstack/stack/email".
  */
@@ -27,9 +34,18 @@ import type {
   SendOptions,
   SendResult,
 } from "@profullstack/emailer";
+import {
+  createFormGuard,
+  provenanceBlock,
+  tagSubject,
+} from "@profullstack/form-guard";
+import type { FormGuard, FormGuardOptions, Verdict } from "@profullstack/form-guard";
 
 export { Emailer, createEmailer };
 export type { BulkSendOptions, BulkSendResult, EmailerConfig, SendOptions, SendResult };
+
+export { createFormGuard, provenanceBlock, tagSubject };
+export type { FormGuard, FormGuardOptions, Verdict };
 
 // ---------------------------------------------------------------------------
 // Next.js interop (structural types + lazy require, so importing this module
@@ -42,6 +58,12 @@ export type { BulkSendOptions, BulkSendResult, EmailerConfig, SendOptions, SendR
  */
 export interface ContactRequest {
   json(): Promise<unknown>;
+  /**
+   * Present on NextRequest and plain Request. Optional so existing
+   * callers still typecheck; without it the guard cannot read the
+   * submitter's address and simply skips rate limiting.
+   */
+  headers?: { get(name: string): string | null };
 }
 
 // A plain `Response` — never NextResponse — so this module has zero Next
@@ -155,7 +177,7 @@ export type ContactResponseValue =
   | ContactResponseSpec
   | ((ctx: ContactResponseContext) => ContactResponseSpec);
 
-/** The five responses a contact route can return. */
+/** The responses a contact route can return. */
 export interface ContactRouteResponses {
   /** Bot filled the honeypot — fake success so bots think it worked. */
   honeypot: ContactResponseValue;
@@ -167,6 +189,14 @@ export interface ContactRouteResponses {
   sendFailed: ContactResponseValue;
   /** Unhandled error: exception, persist failure, missing config (status 500). */
   error: ContactResponseValue;
+  /**
+   * The guard's token was stale or the form came back faster than a
+   * person can type. Both happen to real senders, so this asks them to
+   * send it again rather than losing the message (status 400).
+   */
+  retry?: ContactResponseValue;
+  /** Too many submissions from one address (status 429). */
+  limited?: ContactResponseValue;
 }
 
 /**
@@ -184,6 +214,8 @@ const STYLE_PRESETS: Record<ContactResponseStyle, ContactRouteResponses> = {
     success: { body: { message: "Message received! We'll be in touch." } },
     sendFailed: { body: { message: "Something went wrong." }, status: 500 },
     error: { body: { message: "Something went wrong." }, status: 500 },
+    retry: { body: { message: "That took too long. Please send it again." }, status: 400 },
+    limited: { body: { message: "Too many messages. Please try again later." }, status: 429 },
   },
   success: {
     honeypot: { body: { success: true } },
@@ -200,6 +232,8 @@ const STYLE_PRESETS: Record<ContactResponseStyle, ContactRouteResponses> = {
       status: 500,
     },
     error: { body: { error: "An unexpected error occurred" }, status: 500 },
+    retry: { body: { error: "That took too long. Please send it again." }, status: 400 },
+    limited: { body: { error: "Too many messages. Please try again later." }, status: 429 },
   },
   ok: {
     honeypot: { body: { ok: true } },
@@ -207,6 +241,8 @@ const STYLE_PRESETS: Record<ContactResponseStyle, ContactRouteResponses> = {
     success: (ctx) => ({ body: { ok: true, ...(ctx.id ? { id: ctx.id } : {}) } }),
     sendFailed: { body: { ok: false, error: "Failed to send email" }, status: 500 },
     error: (ctx) => ({ body: { ok: false, error: ctx.error ?? "Internal server error" }, status: 500 }),
+    retry: { body: { ok: false, error: "That took too long. Please send it again." }, status: 400 },
+    limited: { body: { ok: false, error: "Too many messages. Please try again later." }, status: 429 },
   },
 };
 
@@ -290,6 +326,22 @@ export interface ContactRouteOptions {
   /** Send a confirmation email to the submitter. Failures are logged, not fatal. */
   confirmation?: ContactConfirmation;
 
+  /**
+   * Proof-of-render guard.
+   *
+   * A honeypot only catches a bot that renders your page. Most
+   * contact-form spam POSTs straight at the handler, so the hidden field
+   * is absent from the body rather than filled and the honeypot check
+   * passes. The guard requires a signed token minted when the form
+   * renders, which a request that never loaded the page cannot have.
+   *
+   * Pass the options and the route builds the guard, or pass a guard you
+   * already built so the page rendering the form can share it — see
+   * {@link createContactGuard}. The two must agree on `binding` and the
+   * field names or every real submission is rejected.
+   */
+  guard?: FormGuardOptions | FormGuard;
+
   /** Server-side captcha verification (hCaptcha/Turnstile). */
   captcha?: CaptchaOptions;
   /**
@@ -328,6 +380,31 @@ export interface ContactRouteOptions {
 }
 
 /**
+ * Build a guard the form page and the route can share.
+ *
+ * The page needs it to mint a token at render time; the route needs the
+ * identical configuration to verify one. Export a single guard from a
+ * module both import, rather than configuring it twice — a `binding` or
+ * field-name mismatch rejects every genuine submission, silently.
+ *
+ *   // lib/contact-guard.ts
+ *   export const contactGuard = createContactGuard({
+ *     secret: process.env.RESEND_API_KEY!,
+ *     binding: "contact",
+ *   });
+ *
+ *   // app/contact/page.tsx (a server component)
+ *   const token = await contactGuard.issue();
+ *   return <ContactForm token={token} fields={contactGuard.fields(token)} />;
+ *
+ *   // app/api/contact/route.ts
+ *   export const POST = createContactRoute({ to: "…", guard: contactGuard });
+ */
+export function createContactGuard(options: FormGuardOptions): FormGuard {
+  return createFormGuard(options);
+}
+
+/**
  * Create a Next.js App Router POST handler for a contact form.
  *
  *   export const POST = createContactRoute({ to: "hello@example.com" });
@@ -352,6 +429,14 @@ export function createContactRoute(
   };
   const labelFor = (field: string): string =>
     options.fieldLabels?.[field] ?? humanizeField(field);
+
+  // Accept either a pre-built guard (shared with the page that renders
+  // the form) or the options to build one here.
+  const guard: FormGuard | null = options.guard
+    ? "check" in options.guard
+      ? options.guard
+      : createFormGuard(options.guard)
+    : null;
 
   let cachedEmailer: Emailer | undefined;
 
@@ -394,6 +479,32 @@ export function createContactRoute(
         const trap = body[honeypot];
         if (typeof trap === "string" && trap.trim() !== "") {
           return respond(responses.honeypot, {});
+        }
+      }
+
+      // Proof-of-render guard. Runs before validation on purpose: a bot
+      // that gets "Name is required" back has learned what to send next
+      // time, where one that gets a plain success has learned nothing.
+      let verdict: Verdict | null = null;
+      if (guard) {
+        verdict = await guard.check({ fields: body, headers: req.headers ?? null });
+        if (!verdict.allow) {
+          if (verdict.action === "drop") {
+            console.warn(
+              `[contact] dropped submission (${verdict.reason}) ip=${verdict.ip ?? "?"}`,
+            );
+            // Reported as success so the sender cannot tell which check
+            // caught it — the same answer the honeypot gives.
+            return respond(responses.honeypot, {});
+          }
+          if (verdict.action === "limited") {
+            return respond(responses.limited ?? responses.invalid, {
+              error: "Too many messages. Please try again later.",
+            });
+          }
+          return respond(responses.retry ?? responses.invalid, {
+            error: "That took too long. Please send it again.",
+          });
         }
       }
 
@@ -444,6 +555,11 @@ export function createContactRoute(
       // Collect extra fields for the email body.
       const skip = new Set(["name", "email", "message", ...(options.skipFields ?? [])]);
       if (honeypot !== false) skip.add(honeypot);
+      if (guard) {
+        // Plumbing, not content — neither belongs in the email body.
+        skip.add(guard.config.tokenField);
+        skip.add(guard.config.honeypotField);
+      }
       if (options.captcha) {
         skip.add(options.captcha.tokenField ?? CAPTCHA_TOKEN_FIELDS[options.captcha.provider]);
       }
@@ -476,6 +592,10 @@ export function createContactRoute(
             ? options.subject(submission)
             : (options.subject ??
               (name ? `New contact form submission from ${name}` : "New contact form submission"));
+        // A flagged message is still delivered; the tag is there so an
+        // inbox rule can sort it. The heading stays clean — the score and
+        // the signals behind it go in the provenance block below.
+        const mailSubject = verdict ? tagSubject(subjectText, verdict) : subjectText;
 
         const htmlRows: string[] = [];
         if (name) htmlRows.push(`<p><strong>Name:</strong> ${escapeHtml(name)}</p>`);
@@ -497,10 +617,26 @@ export function createContactRoute(
           textLines.push("", "Message:", message);
         }
 
+        // Where it came from and why it scored as it did. None of this is
+        // in the mail headers: the notification is sent by us to us, so it
+        // authenticates perfectly whoever filled the form in.
+        if (verdict) {
+          const provenance = provenanceBlock({
+            ip: verdict.ip,
+            userAgent: verdict.userAgent,
+            verdict,
+          });
+          htmlParts.push(
+            "<hr />",
+            `<pre style="font:12px/1.5 monospace;color:#666">${escapeHtml(provenance)}</pre>`,
+          );
+          textLines.push("", provenance);
+        }
+
         const mail: SendOptions = {
           to,
           from,
-          subject: subjectText,
+          subject: mailSubject,
           html: htmlParts.join("\n"),
           text: options.text === false ? undefined : textLines.join("\n"),
           replyTo: email !== "" ? email : undefined,
