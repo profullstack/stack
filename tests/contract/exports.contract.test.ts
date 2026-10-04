@@ -10,18 +10,10 @@
  *   2. The CJS build loads via createRequire() and exposes the documented
  *      public API of that subpath.
  *   3. The ESM build loads via dynamic import() and exposes the same API.
- *
- * Exception: ./feedback ESM cannot be imported in this repo because `react`
- * is an optional peer that is not installed (FeedbackWidget is a React
- * component). For that subpath we instead pin that (a) the CJS build loads
- * with a stubbed react and exposes the API, and (b) the ESM build fails ONLY
- * because of the missing react peer — proving react is properly externalized
- * rather than the build being broken.
  */
-import { describe, it, expect, beforeAll, afterAll } from "vitest";
+import { describe, it, expect } from "vitest";
 import { existsSync, readFileSync } from "node:fs";
 import { createRequire } from "node:module";
-import Module from "node:module";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -62,12 +54,6 @@ const EXPECTED_EXPORTS: Record<string, string[]> = {
     "createServerSupabase",
     "updateSession",
     "resolveSupabaseConfig",
-  ],
-  "./feedback": [
-    "FeedbackWidget",
-    "feedbackScriptTag",
-    "matchesRoutePrefix",
-    "FEEDBACK_SCRIPT_URL",
   ],
   "./coinpay": [
     "createCoinPayClient",
@@ -117,49 +103,13 @@ function resolveDist(rel: string | undefined, label: string): string {
 }
 
 // ---------------------------------------------------------------------------
-// CJS loading with a stubbed `react` (optional peer, not installed here).
-// ---------------------------------------------------------------------------
-
-type ModuleLoad = (request: string, parent: unknown, isMain: boolean) => unknown;
-const internalModule = Module as unknown as { _load: ModuleLoad };
-let originalLoad: ModuleLoad | null = null;
-
-function stubReactForCjs(): void {
-  if (originalLoad) return;
-  const original = internalModule._load;
-  originalLoad = original;
-  const reactStub = {
-    useEffect: () => {},
-    useState: <T>(v: T) => [v, () => {}],
-    useRef: (v: unknown) => ({ current: v }),
-    useCallback: <T>(fn: T) => fn,
-    useMemo: <T>(fn: () => T) => fn(),
-  };
-  internalModule._load = function (this: unknown, request: string, parent: unknown, isMain: boolean) {
-    if (request === "react") return reactStub;
-    return original.call(this, request, parent, isMain);
-  };
-}
-
-beforeAll(() => {
-  stubReactForCjs();
-});
-
-afterAll(() => {
-  if (originalLoad) {
-    internalModule._load = originalLoad;
-    originalLoad = null;
-  }
-});
-
-// ---------------------------------------------------------------------------
 // 1. Every declared subpath → dist ESM + CJS + types exist
 // ---------------------------------------------------------------------------
 
 describe("exports map ↔ dist files", () => {
   it("declares exactly the documented module set", () => {
     expect([...subpaths()].sort()).toEqual(
-      [".", "./coinpay", "./crawlproof", "./email", "./feedback", "./referrals", "./supabase"].sort(),
+      [".", "./coinpay", "./crawlproof", "./email", "./referrals", "./supabase"].sort(),
     );
   });
 
@@ -207,7 +157,6 @@ describe("CJS builds load via createRequire()", () => {
 
 describe("ESM builds load via import()", () => {
   for (const subpath of subpaths()) {
-    if (subpath === "./feedback") continue; // handled separately below
     it(`${subpath}: import() exposes the documented exports`, async () => {
       const entry = entryFor(subpath);
       const esm = resolveDist(entry.import?.default, `${subpath} import.default`);
@@ -220,22 +169,6 @@ describe("ESM builds load via import()", () => {
       }
     });
   }
-
-  it("./feedback: ESM build fails ONLY on the missing optional react peer", async () => {
-    const entry = entryFor("./feedback");
-    const esm = resolveDist(entry.import?.default, "./feedback import.default");
-    // react is externalized (not bundled) — the failure must be about react,
-    // never a syntax error or a different missing module.
-    const source = readFileSync(esm, "utf8");
-    expect(source).toMatch(/from\s+["']react["']/);
-    const err = await import(esm).then(
-      () => null,
-      (e: unknown) => e as Error,
-    );
-    expect(err, "./feedback ESM unexpectedly imported without react installed").not.toBeNull();
-    expect(err!.message).toMatch(/react/);
-    expect(err!.message).not.toMatch(/next\/navigation/);
-  });
 });
 
 // ---------------------------------------------------------------------------
@@ -251,7 +184,7 @@ describe("loaded builds are functional", () => {
     };
     expect(mod.STACK_VERSION).toBe(pkgVersion());
     expect([...mod.STACK_MODULES].sort()).toEqual(
-      ["coinpay", "crawlproof", "email", "feedback", "referrals", "supabase"].sort(),
+      ["coinpay", "crawlproof", "email", "referrals", "supabase"].sort(),
     );
   });
 
