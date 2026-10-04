@@ -10,7 +10,6 @@ npm install @profullstack/stack
 import { createContactRoute } from "@profullstack/stack/email";
 import { createServerSupabase, updateSession } from "@profullstack/stack/supabase";
 import { createReferralsRouteHandler } from "@profullstack/stack/referrals";
-import { FeedbackWidget } from "@profullstack/stack/feedback";
 import { createCoinPayClient } from "@profullstack/stack/coinpay";
 import { createCrawlproofClient } from "@profullstack/stack/crawlproof";
 ```
@@ -22,7 +21,6 @@ import { createCrawlproofClient } from "@profullstack/stack/crawlproof";
 | `@profullstack/stack/referrals` | Referral-program Next.js glue (route handler, server client, middleware re-exports) |
 | `@profullstack/stack/email` | Transactional email + ready-made contact-form route (wraps `@profullstack/emailer`) |
 | `@profullstack/stack/supabase` | supabase-ssr client/server/middleware factories |
-| `@profullstack/stack/feedback` | Feedback widget React component + script embed helper |
 | `@profullstack/stack/coinpay` | CoinPayPortal API client, webhook verification, CoinPay OAuth login helpers |
 | `@profullstack/stack/crawlproof` | crawlproof.com audit API client |
 

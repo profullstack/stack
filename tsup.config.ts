@@ -6,7 +6,6 @@ export default defineConfig({
     "referrals/index": "src/referrals/index.ts",
     "email/index": "src/email/index.ts",
     "supabase/index": "src/supabase/index.ts",
-    "feedback/index": "src/feedback/index.tsx",
     "coinpay/index": "src/coinpay/index.ts",
     "crawlproof/index": "src/crawlproof/index.ts",
   },

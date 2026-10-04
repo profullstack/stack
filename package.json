@@ -1,7 +1,7 @@
 {
   "name": "@profullstack/stack",
-  "version": "0.2.0",
-  "description": "The Profullstack open source stack — shared modules for Next.js/Node apps: referrals, email, supabase, feedback widget, coinpay, crawlproof.",
+  "version": "0.3.0",
+  "description": "The Profullstack open source stack — shared modules for Next.js/Node apps: referrals, email, supabase, coinpay, crawlproof.",
   "license": "MIT",
   "type": "module",
   "exports": {
@@ -43,16 +43,6 @@
       "require": {
         "types": "./dist/supabase/index.d.cts",
         "default": "./dist/supabase/index.cjs"
-      }
-    },
-    "./feedback": {
-      "import": {
-        "types": "./dist/feedback/index.d.ts",
-        "default": "./dist/feedback/index.js"
-      },
-      "require": {
-        "types": "./dist/feedback/index.d.cts",
-        "default": "./dist/feedback/index.cjs"
       }
     },
     "./coinpay": {
