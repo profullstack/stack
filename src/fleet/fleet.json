@@ -1,0 +1,1758 @@
+{
+ "version": 1,
+ "updated": "2026-10-06",
+ "auth": {
+  "kind": "oauth",
+  "provider": "coinpay",
+  "issuer": "https://coinpayportal.com",
+  "discovery": "https://coinpayportal.com/.well-known/openid-configuration",
+  "scopes": "openid profile email did wallet:read",
+  "pkce": "S256",
+  "callback_path": "/api/v1/coinpay/callback"
+ },
+ "services": [
+  {
+   "domain": "advis0r.com",
+   "name": "advis0r",
+   "description": "Executive-transcript stock discovery — evidence-backed research watchlists. Research aid, not financial advice.",
+   "category": "finance",
+   "url": "https://advis0r.com/",
+   "live": true,
+   "auth": {
+    "kind": "oauth",
+    "provider": "coinpay",
+    "issuer": "https://coinpayportal.com"
+   },
+   "surfaces": {
+    "web": "https://advis0r.com/",
+    "api": "https://advis0r.com/api",
+    "openapi": null,
+    "mcp": null,
+    "mcp_tools": null,
+    "openmcp": null,
+    "llms": null,
+    "install": null,
+    "pwa": true,
+    "openaccess": "https://advis0r.com/.well-known/openaccess.json"
+   },
+   "npm": [],
+   "pwamart": "https://pwamart.com/apps/advis0r-com"
+  },
+  {
+   "domain": "agenticjobs.work",
+   "name": "Agentic Jobs",
+   "description": "Jobs posted here, not scraped from somewhere else.",
+   "category": "business",
+   "url": "https://agenticjobs.work/",
+   "live": true,
+   "auth": {
+    "kind": "oauth",
+    "provider": "coinpay",
+    "issuer": "https://coinpayportal.com"
+   },
+   "surfaces": {
+    "web": "https://agenticjobs.work/",
+    "api": null,
+    "openapi": "https://agenticjobs.work/openapi.json",
+    "mcp": "https://agenticjobs.work/api/mcp",
+    "mcp_tools": 30,
+    "openmcp": "https://agenticjobs.work/.well-known/openmcp.json",
+    "llms": "https://agenticjobs.work/llms.txt",
+    "install": "curl -fsSL https://agenticjobs.work/install.sh | sh",
+    "pwa": true,
+    "openaccess": "https://agenticjobs.work/.well-known/openaccess.json"
+   },
+   "npm": [
+    "@profullstack/agenticjobs@0.22.4",
+    "@profullstack/myna-plugin-agenticjobs@0.1.0"
+   ],
+   "pwamart": "https://pwamart.com/apps/agentic-jobs"
+  },
+  {
+   "domain": "aiornot.vote",
+   "name": "AIorNot.vote",
+   "description": "Can you tell AI from real? Play the crowd-sourced AI-detection game — vote on images, videos &amp; posts, or get the crowd&#x27;s verdict by API and RSS.",
+   "category": "ai",
+   "url": "https://aiornot.vote/",
+   "live": true,
+   "auth": {
+    "kind": "oauth",
+    "provider": "coinpay",
+    "issuer": "https://coinpayportal.com"
+   },
+   "surfaces": {
+    "web": "https://aiornot.vote/",
+    "api": null,
+    "openapi": null,
+    "mcp": null,
+    "mcp_tools": null,
+    "openmcp": null,
+    "llms": "https://aiornot.vote/llms.txt",
+    "install": null,
+    "pwa": false,
+    "openaccess": "https://aiornot.vote/.well-known/openaccess.json"
+   },
+   "npm": [],
+   "pwamart": null
+  },
+  {
+   "domain": "b1dz.com",
+   "name": "b1dz",
+   "description": "Realtime auto-trading across multiple crypto exchanges. AI-powered arbitrage and trading strategies.",
+   "category": "finance",
+   "url": "https://b1dz.com/",
+   "live": true,
+   "auth": {
+    "kind": "oauth",
+    "provider": "coinpay",
+    "issuer": "https://coinpayportal.com"
+   },
+   "surfaces": {
+    "web": "https://b1dz.com/",
+    "api": null,
+    "openapi": null,
+    "mcp": null,
+    "mcp_tools": null,
+    "openmcp": "https://b1dz.com/.well-known/openmcp.json",
+    "llms": "https://b1dz.com/llms.txt",
+    "install": null,
+    "pwa": true,
+    "openaccess": "https://b1dz.com/.well-known/openaccess.json"
+   },
+   "npm": [],
+   "pwamart": "https://pwamart.com/apps/b1dz"
+  },
+  {
+   "domain": "bbs.profullstack.com",
+   "name": "AgentBBS",
+   "description": "AgentBBS: a 1980s-style bulletin board system, reborn over SSH, for humans and AI agents. Arcade, IRC, Usenet, mail, git, a Linux pod and your own homepage.",
+   "category": "communication",
+   "url": "https://bbs.profullstack.com/",
+   "live": true,
+   "auth": {
+    "kind": "oauth",
+    "provider": "coinpay",
+    "issuer": "https://coinpayportal.com"
+   },
+   "surfaces": {
+    "web": "https://bbs.profullstack.com/",
+    "api": null,
+    "openapi": null,
+    "mcp": null,
+    "mcp_tools": null,
+    "openmcp": null,
+    "llms": null,
+    "install": null,
+    "pwa": false,
+    "openaccess": "https://bbs.profullstack.com/.well-known/openaccess.json"
+   },
+   "npm": [],
+   "pwamart": null
+  },
+  {
+   "domain": "bg0ne.com",
+   "name": "bg0ne",
+   "description": "Remove image backgrounds with open models. Free previews, pay by the image for full resolution, or self-host the whole thing.",
+   "category": "design",
+   "url": "https://bg0ne.com/",
+   "live": true,
+   "auth": {
+    "kind": "oauth",
+    "provider": "coinpay",
+    "issuer": "https://coinpayportal.com"
+   },
+   "surfaces": {
+    "web": "https://bg0ne.com/",
+    "api": null,
+    "openapi": null,
+    "mcp": null,
+    "mcp_tools": null,
+    "openmcp": null,
+    "llms": null,
+    "install": null,
+    "pwa": false,
+    "openaccess": null
+   },
+   "npm": [],
+   "pwamart": null
+  },
+  {
+   "domain": "bittorrented.com",
+   "name": "bittorrented",
+   "description": "More than a tracker: BitTorrented finds torrents on the DHT, streams them in your browser as they arrive, and runs seedboxes that download and seed for you. Invite only.",
+   "category": "media",
+   "url": "https://bittorrented.com/invite-only/",
+   "live": true,
+   "auth": {
+    "kind": "oauth",
+    "provider": "coinpay",
+    "issuer": "https://coinpayportal.com"
+   },
+   "surfaces": {
+    "web": "https://bittorrented.com/invite-only/",
+    "api": null,
+    "openapi": null,
+    "mcp": null,
+    "mcp_tools": null,
+    "openmcp": null,
+    "llms": null,
+    "install": null,
+    "pwa": false,
+    "openaccess": null
+   },
+   "npm": [
+    "@profullstack/torlink@1.5.1"
+   ],
+   "pwamart": null
+  },
+  {
+   "domain": "bl0ggers.com",
+   "name": "bl0ggers",
+   "description": "bl0ggers. turns AI-generated research into blogs, podcasts, and newsletters with optional human review, persona journeys, subdomain publishing, and webhook-based automation.",
+   "category": "news",
+   "url": "https://bl0ggers.com/",
+   "live": true,
+   "auth": {
+    "kind": "oauth",
+    "provider": "coinpay",
+    "issuer": "https://coinpayportal.com"
+   },
+   "surfaces": {
+    "web": "https://bl0ggers.com/",
+    "api": null,
+    "openapi": null,
+    "mcp": "https://bl0ggers.com/api/mcp",
+    "mcp_tools": 0,
+    "openmcp": null,
+    "llms": "https://bl0ggers.com/llms.txt",
+    "install": null,
+    "pwa": true,
+    "openaccess": "https://bl0ggers.com/.well-known/openaccess.json"
+   },
+   "npm": [
+    "@profullstack/bl0ggers@0.1.0"
+   ],
+   "pwamart": "https://pwamart.com/apps/bl0ggers"
+  },
+  {
+   "domain": "brisk.news",
+   "name": "brisk.news",
+   "description": "Get AI-powered summaries and audio briefings of the latest news.",
+   "category": "news",
+   "url": "https://brisk.news/",
+   "live": true,
+   "auth": {
+    "kind": "oauth",
+    "provider": "coinpay",
+    "issuer": "https://coinpayportal.com"
+   },
+   "surfaces": {
+    "web": "https://brisk.news/",
+    "api": null,
+    "openapi": null,
+    "mcp": null,
+    "mcp_tools": null,
+    "openmcp": null,
+    "llms": null,
+    "install": null,
+    "pwa": true,
+    "openaccess": "https://brisk.news/.well-known/openaccess.json"
+   },
+   "npm": [],
+   "pwamart": "https://pwamart.com/apps/brisk-news"
+  },
+  {
+   "domain": "bufferoverride.com",
+   "name": "BufferOverride",
+   "description": "A public technical Q&amp;A network where humans and AI agents ask, answer, reproduce and verify. Every answer declares its versions, its author and who reproduced it.",
+   "category": "security",
+   "url": "https://bufferoverride.com/",
+   "live": true,
+   "auth": {
+    "kind": "oauth",
+    "provider": "coinpay",
+    "issuer": "https://coinpayportal.com"
+   },
+   "surfaces": {
+    "web": "https://bufferoverride.com/",
+    "api": null,
+    "openapi": null,
+    "mcp": "https://bufferoverride.com/mcp",
+    "mcp_tools": 5,
+    "openmcp": "https://bufferoverride.com/.well-known/openmcp.json",
+    "llms": "https://bufferoverride.com/llms.txt",
+    "install": null,
+    "pwa": true,
+    "openaccess": "https://bufferoverride.com/.well-known/openaccess.json"
+   },
+   "npm": [
+    "@profullstack/bufferoverride@0.1.0"
+   ],
+   "pwamart": "https://pwamart.com/apps/bufferoverride"
+  },
+  {
+   "domain": "c0mpute.com",
+   "name": "c0mpute",
+   "description": "The open compute network. Run jobs anywhere, sell unused compute, pay only for verified work. CPUs, GPUs, storage and bandwidth from PCs to data centers, through one open protocol — for humans and AI agents.",
+   "category": "ai",
+   "url": "https://c0mpute.com/",
+   "live": true,
+   "auth": {
+    "kind": "oauth",
+    "provider": "coinpay",
+    "issuer": "https://coinpayportal.com"
+   },
+   "surfaces": {
+    "web": "https://c0mpute.com/",
+    "api": null,
+    "openapi": null,
+    "mcp": null,
+    "mcp_tools": null,
+    "openmcp": null,
+    "llms": "https://c0mpute.com/llms.txt",
+    "install": "curl -fsSL https://c0mpute.com/install.sh | sh",
+    "pwa": true,
+    "openaccess": "https://c0mpute.com/.well-known/openaccess.json"
+   },
+   "npm": [],
+   "pwamart": "https://pwamart.com/apps/p2p-one"
+  },
+  {
+   "domain": "c0ncerts.com",
+   "name": "c0ncerts",
+   "description": "Ticketed livestreams, replay access, reusable performance footage, and optional production partners for bands, venues, and promoters.",
+   "category": "media",
+   "url": "https://c0ncerts.com/",
+   "live": true,
+   "auth": {
+    "kind": "oauth",
+    "provider": "coinpay",
+    "issuer": "https://coinpayportal.com"
+   },
+   "surfaces": {
+    "web": "https://c0ncerts.com/",
+    "api": null,
+    "openapi": null,
+    "mcp": null,
+    "mcp_tools": null,
+    "openmcp": null,
+    "llms": "https://c0ncerts.com/llms.txt",
+    "install": null,
+    "pwa": true,
+    "openaccess": "https://c0ncerts.com/.well-known/openaccess.json"
+   },
+   "npm": [],
+   "pwamart": "https://pwamart.com/apps/c0ncerts-com"
+  },
+  {
+   "domain": "c0upons.com",
+   "name": "c0upons",
+   "description": "Find and share the best coupon codes. Browse 43,819 coupons across 635 stores — updated daily by the community. 100% free, no account needed.",
+   "category": "shopping",
+   "url": "https://c0upons.com/",
+   "live": true,
+   "auth": {
+    "kind": "oauth",
+    "provider": "coinpay",
+    "issuer": "https://coinpayportal.com"
+   },
+   "surfaces": {
+    "web": "https://c0upons.com/",
+    "api": null,
+    "openapi": null,
+    "mcp": "https://c0upons.com/api/mcp",
+    "mcp_tools": 10,
+    "openmcp": "https://c0upons.com/.well-known/openmcp.json",
+    "llms": "https://c0upons.com/llms.txt",
+    "install": "curl -fsSL https://c0upons.com/install.sh | sh",
+    "pwa": true,
+    "openaccess": "https://c0upons.com/.well-known/openaccess.json"
+   },
+   "npm": [],
+   "pwamart": "https://pwamart.com/apps/c0upons"
+  },
+  {
+   "domain": "chovy.com",
+   "name": "Chovy",
+   "description": "Describe what you want in your own words. Chovy turns it into a plan, builds it, and brings the result back for you to approve — before anything goes live.",
+   "category": "ai",
+   "url": "https://chovy.com/",
+   "live": true,
+   "auth": {
+    "kind": "oauth",
+    "provider": "coinpay",
+    "issuer": "https://coinpayportal.com"
+   },
+   "surfaces": {
+    "web": "https://chovy.com/",
+    "api": "https://chovy.com/api/v1",
+    "openapi": null,
+    "mcp": null,
+    "mcp_tools": null,
+    "openmcp": null,
+    "llms": "https://chovy.com/llms.txt",
+    "install": null,
+    "pwa": true,
+    "openaccess": "https://chovy.com/.well-known/openaccess.json"
+   },
+   "npm": [],
+   "pwamart": "https://pwamart.com/apps/chovy"
+  },
+  {
+   "domain": "coinpayportal.com",
+   "name": "CoinPay",
+   "description": "Accept cryptocurrency payments in your e-commerce store with automatic fee handling and real-time processing",
+   "category": "finance",
+   "url": "https://coinpayportal.com/",
+   "live": true,
+   "auth": {
+    "kind": "oauth",
+    "provider": "coinpay",
+    "issuer": "https://coinpayportal.com"
+   },
+   "surfaces": {
+    "web": "https://coinpayportal.com/",
+    "api": "https://coinpayportal.com/api",
+    "openapi": null,
+    "mcp": null,
+    "mcp_tools": null,
+    "openmcp": null,
+    "llms": "https://coinpayportal.com/llms.txt",
+    "install": "curl -fsSL https://coinpayportal.com/install.sh | sh",
+    "pwa": true,
+    "openaccess": "https://coinpayportal.com/.well-known/openaccess.json"
+   },
+   "npm": [
+    "@profullstack/coinpay@0.13.0",
+    "@profullstack/sh1pt-payment-coinpay@0.1.11"
+   ],
+   "pwamart": "https://pwamart.com/apps/coinpay"
+  },
+  {
+   "domain": "complymist.com",
+   "name": "ComplyMist",
+   "description": "Admins upload business licenses, contractor credentials, and municipal permits. ComplyMist tracks expiration dates and sends automated email alerts with direct renewal links.",
+   "category": "business",
+   "url": "https://complymist.com/",
+   "live": true,
+   "auth": {
+    "kind": "oauth",
+    "provider": "coinpay",
+    "issuer": "https://coinpayportal.com"
+   },
+   "surfaces": {
+    "web": "https://complymist.com/",
+    "api": null,
+    "openapi": null,
+    "mcp": null,
+    "mcp_tools": null,
+    "openmcp": null,
+    "llms": null,
+    "install": null,
+    "pwa": false,
+    "openaccess": null
+   },
+   "npm": [],
+   "pwamart": null
+  },
+  {
+   "domain": "crawlproof.com",
+   "name": "CrawlProof",
+   "description": "CrawlProof runs an AEO audit on any URL and reports what LLM crawlers and answer engines can actually find — content, schema, robots rules, AI-bot access, and positioning.",
+   "category": "business",
+   "url": "https://crawlproof.com/",
+   "live": true,
+   "auth": {
+    "kind": "oauth",
+    "provider": "coinpay",
+    "issuer": "https://coinpayportal.com"
+   },
+   "surfaces": {
+    "web": "https://crawlproof.com/",
+    "api": null,
+    "openapi": null,
+    "mcp": null,
+    "mcp_tools": null,
+    "openmcp": "https://crawlproof.com/.well-known/openmcp.json",
+    "llms": "https://crawlproof.com/llms.txt",
+    "install": null,
+    "pwa": true,
+    "openaccess": "https://crawlproof.com/.well-known/openaccess.json"
+   },
+   "npm": [
+    "@profullstack/crawlproof@0.5.0"
+   ],
+   "pwamart": "https://pwamart.com/apps/crawlproof"
+  },
+  {
+   "domain": "d0rz.com",
+   "name": "d0rz",
+   "description": "d0rz is the local assistance marketplace for rides, errands, delivery, groceries, appointment transport, and home help — on demand or by appointment.",
+   "category": "shopping",
+   "url": "https://d0rz.com/",
+   "live": true,
+   "auth": {
+    "kind": "oauth",
+    "provider": "coinpay",
+    "issuer": "https://coinpayportal.com"
+   },
+   "surfaces": {
+    "web": "https://d0rz.com/",
+    "api": null,
+    "openapi": "https://d0rz.com/openapi.json",
+    "mcp": null,
+    "mcp_tools": null,
+    "openmcp": null,
+    "llms": "https://d0rz.com/llms.txt",
+    "install": null,
+    "pwa": true,
+    "openaccess": "https://d0rz.com/.well-known/openaccess.json"
+   },
+   "npm": [
+    "@profullstack/d0rz@0.1.0"
+   ],
+   "pwamart": "https://pwamart.com/apps/d0rz"
+  },
+  {
+   "domain": "d3vices.com",
+   "name": "d3vices",
+   "description": "Free, open-source hardware diagnostics. Test your mic, camera, speakers, screen, keyboard, sensors and network in the browser. Nothing is uploaded.",
+   "category": "utilities",
+   "url": "https://d3vices.com/",
+   "live": true,
+   "auth": {
+    "kind": "oauth",
+    "provider": "coinpay",
+    "issuer": "https://coinpayportal.com"
+   },
+   "surfaces": {
+    "web": "https://d3vices.com/",
+    "api": null,
+    "openapi": null,
+    "mcp": null,
+    "mcp_tools": null,
+    "openmcp": null,
+    "llms": "https://d3vices.com/llms.txt",
+    "install": null,
+    "pwa": true,
+    "openaccess": "https://d3vices.com/.well-known/openaccess.json"
+   },
+   "npm": [],
+   "pwamart": "https://pwamart.com/apps/d3vices"
+  },
+  {
+   "domain": "demo.movie",
+   "name": "demo.movie",
+   "description": "Give it a URL. It explores your product, films the parts worth showing, writes the script, narrates it and cuts a demo video.",
+   "category": "ai",
+   "url": "https://demo.movie/",
+   "live": true,
+   "auth": {
+    "kind": "oauth",
+    "provider": "coinpay",
+    "issuer": "https://coinpayportal.com"
+   },
+   "surfaces": {
+    "web": "https://demo.movie/",
+    "api": "https://demo.movie/api/v1",
+    "openapi": null,
+    "mcp": null,
+    "mcp_tools": null,
+    "openmcp": null,
+    "llms": null,
+    "install": null,
+    "pwa": true,
+    "openaccess": null
+   },
+   "npm": [
+    "@profullstack/demomovie@0.1.0",
+    "@profullstack/demomovie-mcp@0.1.0"
+   ],
+   "pwamart": "https://pwamart.com/apps/demo-movie"
+  },
+  {
+   "domain": "diskpush.com",
+   "name": "DiskPush",
+   "description": "Browse servers like FileZilla and transfer with rsync. DiskPush provides resumable incremental sync, direct server-to-server transfers, desktop and CLI workflows.",
+   "category": "utilities",
+   "url": "https://diskpush.com/",
+   "live": true,
+   "auth": {
+    "kind": "oauth",
+    "provider": "coinpay",
+    "issuer": "https://coinpayportal.com"
+   },
+   "surfaces": {
+    "web": "https://diskpush.com/",
+    "api": null,
+    "openapi": null,
+    "mcp": null,
+    "mcp_tools": null,
+    "openmcp": null,
+    "llms": "https://diskpush.com/llms.txt",
+    "install": "curl -fsSL https://diskpush.com/install.sh | sh",
+    "pwa": true,
+    "openaccess": "https://diskpush.com/.well-known/openaccess.json"
+   },
+   "npm": [],
+   "pwamart": "https://pwamart.com/apps/diskpush"
+  },
+  {
+   "domain": "genrewatch.com",
+   "name": "GenreWatch",
+   "description": "Follow a genre or a name and get told before it drops. Free.",
+   "category": "media",
+   "url": "https://genrewatch.com/",
+   "live": true,
+   "auth": {
+    "kind": "oauth",
+    "provider": "coinpay",
+    "issuer": "https://coinpayportal.com"
+   },
+   "surfaces": {
+    "web": "https://genrewatch.com/",
+    "api": "https://genrewatch.com/api/v1",
+    "openapi": null,
+    "mcp": null,
+    "mcp_tools": null,
+    "openmcp": null,
+    "llms": null,
+    "install": null,
+    "pwa": true,
+    "openaccess": "https://genrewatch.com/.well-known/openaccess.json"
+   },
+   "npm": [],
+   "pwamart": "https://pwamart.com/apps/genrewatch"
+  },
+  {
+   "domain": "goingbroke.now",
+   "name": "Going Broke",
+   "description": "Start a countdown to broke. Every crypto deposit buys back time, pays down the debt, and unlocks a 50% coupon across the Profullstack network.",
+   "category": "finance",
+   "url": "https://goingbroke.now/",
+   "live": true,
+   "auth": {
+    "kind": "oauth",
+    "provider": "coinpay",
+    "issuer": "https://coinpayportal.com"
+   },
+   "surfaces": {
+    "web": "https://goingbroke.now/",
+    "api": null,
+    "openapi": null,
+    "mcp": null,
+    "mcp_tools": null,
+    "openmcp": null,
+    "llms": "https://goingbroke.now/llms.txt",
+    "install": null,
+    "pwa": false,
+    "openaccess": "https://goingbroke.now/.well-known/openaccess.json"
+   },
+   "npm": [],
+   "pwamart": null
+  },
+  {
+   "domain": "hqtui.com",
+   "name": "HQTUI",
+   "description": "High Quality Terminal UI for TypeScript, Rust, Go, Python and Zig. Native implementations, dark themes, Braille graphics and zero runtime dependencies.",
+   "category": "developer-tools",
+   "url": "https://hqtui.com/",
+   "live": true,
+   "auth": {
+    "kind": "oauth",
+    "provider": "coinpay",
+    "issuer": "https://coinpayportal.com"
+   },
+   "surfaces": {
+    "web": "https://hqtui.com/",
+    "api": null,
+    "openapi": null,
+    "mcp": null,
+    "mcp_tools": null,
+    "openmcp": null,
+    "llms": null,
+    "install": null,
+    "pwa": true,
+    "openaccess": null
+   },
+   "npm": [
+    "@profullstack/g1tz@0.2.2",
+    "@profullstack/hqtui@0.9.0",
+    "@profullstack/hqtui-demo@0.9.0",
+    "@profullstack/nmaptui@0.1.0",
+    "@profullstack/r3q@0.1.4"
+   ],
+   "pwamart": "https://pwamart.com/apps/hqtui"
+  },
+  {
+   "domain": "infernetprotocol.com",
+   "name": "Infernet Protocol",
+   "description": "A peer-to-peer GPU compute marketplace for inference and distributed training. Operators run one CLI command and start earning crypto. Clients pay in any supported coin. No native token, no rent extraction.",
+   "category": "ai",
+   "url": "https://infernetprotocol.com/",
+   "live": true,
+   "auth": {
+    "kind": "oauth",
+    "provider": "coinpay",
+    "issuer": "https://coinpayportal.com"
+   },
+   "surfaces": {
+    "web": "https://infernetprotocol.com/",
+    "api": null,
+    "openapi": null,
+    "mcp": null,
+    "mcp_tools": null,
+    "openmcp": null,
+    "llms": "https://infernetprotocol.com/llms.txt",
+    "install": "curl -fsSL https://infernetprotocol.com/install.sh | sh",
+    "pwa": true,
+    "openaccess": "https://infernetprotocol.com/.well-known/openaccess.json"
+   },
+   "npm": [],
+   "pwamart": "https://pwamart.com/apps/infernet-protocol"
+  },
+  {
+   "domain": "logicsrc.com",
+   "name": "LogicSRC",
+   "description": "Open schemas, primitives, and conventions for coordination between humans, AI agents, plugins, payment systems, and hosted products.",
+   "category": "developer-tools",
+   "url": "https://logicsrc.com/",
+   "live": true,
+   "auth": {
+    "kind": "oauth",
+    "provider": "coinpay",
+    "issuer": "https://coinpayportal.com"
+   },
+   "surfaces": {
+    "web": "https://logicsrc.com/",
+    "api": null,
+    "openapi": null,
+    "mcp": null,
+    "mcp_tools": null,
+    "openmcp": null,
+    "llms": "https://logicsrc.com/llms.txt",
+    "install": "curl -fsSL https://logicsrc.com/install.sh | sh",
+    "pwa": true,
+    "openaccess": "https://logicsrc.com/.well-known/openaccess.json"
+   },
+   "npm": [
+    "@logicsrc/openfleet@0.1.0",
+    "@logicsrc/schemas@0.3.0",
+    "@logicsrc/sdk@0.3.0"
+   ],
+   "pwamart": "https://pwamart.com/apps/logicsrc"
+  },
+  {
+   "domain": "marksyncr.com",
+   "name": "MarkSyncr",
+   "description": "Sync your browser bookmarks across Chrome, Firefox, and Safari using GitHub, Dropbox, Google Drive, or our cloud service. Includes a free built-in ad &amp; tracker blocker.",
+   "category": "productivity",
+   "url": "https://marksyncr.com/",
+   "live": true,
+   "auth": {
+    "kind": "oauth",
+    "provider": "coinpay",
+    "issuer": "https://coinpayportal.com"
+   },
+   "surfaces": {
+    "web": "https://marksyncr.com/",
+    "api": null,
+    "openapi": null,
+    "mcp": null,
+    "mcp_tools": null,
+    "openmcp": null,
+    "llms": "https://marksyncr.com/llms.txt",
+    "install": null,
+    "pwa": true,
+    "openaccess": "https://marksyncr.com/.well-known/openaccess.json"
+   },
+   "npm": [],
+   "pwamart": "https://pwamart.com/apps/marksyncr"
+  },
+  {
+   "domain": "mediaanalyzer.pro",
+   "name": "MediaAnalyzer",
+   "description": "Point MediaAnalyzer at hundreds of gigabytes of photos, videos, audio and documents: PDFs, Word, Excel, PowerPoint, e-books, camera RAW. It writes a searchable description for every file and sorts each one into the right folder.",
+   "category": "ai",
+   "url": "https://mediaanalyzer.pro/",
+   "live": true,
+   "auth": {
+    "kind": "oauth",
+    "provider": "coinpay",
+    "issuer": "https://coinpayportal.com"
+   },
+   "surfaces": {
+    "web": "https://mediaanalyzer.pro/",
+    "api": null,
+    "openapi": null,
+    "mcp": null,
+    "mcp_tools": null,
+    "openmcp": null,
+    "llms": null,
+    "install": "curl -fsSL https://mediaanalyzer.pro/install.sh | sh",
+    "pwa": true,
+    "openaccess": null
+   },
+   "npm": [
+    "@profullstack/mediaanalyzer@0.4.0"
+   ],
+   "pwamart": "https://pwamart.com/apps/mediaanalyzer"
+  },
+  {
+   "domain": "meshhook.com",
+   "name": "MeshHook",
+   "description": "Webhook-first, deterministic workflow engine",
+   "category": "developer-tools",
+   "url": "https://meshhook.com/",
+   "live": true,
+   "auth": {
+    "kind": "oauth",
+    "provider": "coinpay",
+    "issuer": "https://coinpayportal.com"
+   },
+   "surfaces": {
+    "web": "https://meshhook.com/",
+    "api": null,
+    "openapi": null,
+    "mcp": null,
+    "mcp_tools": null,
+    "openmcp": null,
+    "llms": null,
+    "install": null,
+    "pwa": true,
+    "openaccess": null
+   },
+   "npm": [],
+   "pwamart": "https://pwamart.com/apps/meshhook"
+  },
+  {
+   "domain": "moshcode.sh",
+   "name": "moshcode",
+   "description": "moshcode installs and drives the coding agents you already use — opencode, Claude Code, codex and seven more — then keeps their sessions alive, counts what they cost, and bills for the work.",
+   "category": "developer-tools",
+   "url": "https://moshcode.sh/",
+   "live": true,
+   "auth": {
+    "kind": "oauth",
+    "provider": "coinpay",
+    "issuer": "https://coinpayportal.com"
+   },
+   "surfaces": {
+    "web": "https://moshcode.sh/",
+    "api": null,
+    "openapi": null,
+    "mcp": null,
+    "mcp_tools": null,
+    "openmcp": null,
+    "llms": "https://moshcode.sh/llms.txt",
+    "install": "curl -fsSL https://moshcode.sh/install.sh | sh",
+    "pwa": false,
+    "openaccess": null
+   },
+   "npm": [
+    "moshcode@0.111.0"
+   ],
+   "pwamart": null
+  },
+  {
+   "domain": "moshcoding.com",
+   "name": "moshcoding",
+   "description": "A Spotify playlist for developers who code hard and mosh harder. Point any domain at moshcoding for an instant metal coming-soon page with an email waitlist.",
+   "category": "developer-tools",
+   "url": "https://moshcoding.com/",
+   "live": true,
+   "auth": {
+    "kind": "oauth",
+    "provider": "coinpay",
+    "issuer": "https://coinpayportal.com"
+   },
+   "surfaces": {
+    "web": "https://moshcoding.com/",
+    "api": null,
+    "openapi": null,
+    "mcp": null,
+    "mcp_tools": null,
+    "openmcp": null,
+    "llms": null,
+    "install": "curl -fsSL https://moshcoding.com/install.sh | sh",
+    "pwa": false,
+    "openaccess": "https://moshcoding.com/.well-known/openaccess.json"
+   },
+   "npm": [],
+   "pwamart": null
+  },
+  {
+   "domain": "naallo.com",
+   "name": "Naallo",
+   "description": "Custom tattoo artistry and premium mobile auto detailing. Two crafts, one artist. Book your session today.",
+   "category": "lifestyle",
+   "url": "https://naallo.com/",
+   "live": true,
+   "auth": {
+    "kind": "oauth",
+    "provider": "coinpay",
+    "issuer": "https://coinpayportal.com"
+   },
+   "surfaces": {
+    "web": "https://naallo.com/",
+    "api": null,
+    "openapi": null,
+    "mcp": null,
+    "mcp_tools": null,
+    "openmcp": null,
+    "llms": null,
+    "install": null,
+    "pwa": false,
+    "openaccess": "https://naallo.com/.well-known/openaccess.json"
+   },
+   "npm": [],
+   "pwamart": null
+  },
+  {
+   "domain": "nichedb.dev",
+   "name": "NicheDB",
+   "description": "An open, ever-growing database of real-time data. Follow a feed, get told. Web, RSS, API, CLI and MCP.",
+   "category": "business",
+   "url": "https://nichedb.dev/",
+   "live": true,
+   "auth": {
+    "kind": "oauth",
+    "provider": "coinpay",
+    "issuer": "https://coinpayportal.com"
+   },
+   "surfaces": {
+    "web": "https://nichedb.dev/",
+    "api": "https://nichedb.dev/api/v1",
+    "openapi": null,
+    "mcp": "https://nichedb.dev/api/mcp",
+    "mcp_tools": 26,
+    "openmcp": "https://nichedb.dev/.well-known/openmcp.json",
+    "llms": "https://nichedb.dev/llms.txt",
+    "install": null,
+    "pwa": true,
+    "openaccess": "https://nichedb.dev/.well-known/openaccess.json"
+   },
+   "npm": [
+    "@profullstack/nichedb@0.35.8"
+   ],
+   "pwamart": "https://pwamart.com/apps/nichedb"
+  },
+  {
+   "domain": "nightcell7.com",
+   "name": "NIGHTCELL 7",
+   "description": "Two operatives. Two countries. One manufactured war. Play both sides before the truth disappears.",
+   "category": "media",
+   "url": "https://nightcell7.com/",
+   "live": true,
+   "auth": {
+    "kind": "oauth",
+    "provider": "coinpay",
+    "issuer": "https://coinpayportal.com"
+   },
+   "surfaces": {
+    "web": "https://nightcell7.com/",
+    "api": null,
+    "openapi": null,
+    "mcp": null,
+    "mcp_tools": null,
+    "openmcp": null,
+    "llms": null,
+    "install": "curl -fsSL https://nightcell7.com/install.sh | sh",
+    "pwa": false,
+    "openaccess": null
+   },
+   "npm": [],
+   "pwamart": null
+  },
+  {
+   "domain": "nixamp.com",
+   "name": "nixamp",
+   "description": "Broadcast live radio, television and film from your own machine with nixamp, the open source streaming platform you run yourself. Terminal, web and desktop on one engine. Listen free, go live in one command, monetize with x402.",
+   "category": "media",
+   "url": "https://nixamp.com/",
+   "live": true,
+   "auth": {
+    "kind": "oauth",
+    "provider": "coinpay",
+    "issuer": "https://coinpayportal.com"
+   },
+   "surfaces": {
+    "web": "https://nixamp.com/",
+    "api": null,
+    "openapi": null,
+    "mcp": null,
+    "mcp_tools": null,
+    "openmcp": null,
+    "llms": null,
+    "install": "curl -fsSL https://nixamp.com/install.sh | sh",
+    "pwa": true,
+    "openaccess": "https://nixamp.com/.well-known/openaccess.json"
+   },
+   "npm": [
+    "nixamp@0.28.43"
+   ],
+   "pwamart": "https://pwamart.com/apps/nixamp"
+  },
+  {
+   "domain": "outreachgraph.com",
+   "name": "OutreachGraph",
+   "description": "Find where your prospects are actually active, understand what they care about right now, and get the right moment to engage. Policy-aware, source-backed, human-approved.",
+   "category": "business",
+   "url": "https://outreachgraph.com/",
+   "live": true,
+   "auth": {
+    "kind": "oauth",
+    "provider": "coinpay",
+    "issuer": "https://coinpayportal.com"
+   },
+   "surfaces": {
+    "web": "https://outreachgraph.com/",
+    "api": "https://outreachgraph.com/api/v1",
+    "openapi": null,
+    "mcp": null,
+    "mcp_tools": null,
+    "openmcp": null,
+    "llms": null,
+    "install": null,
+    "pwa": true,
+    "openaccess": "https://outreachgraph.com/.well-known/openaccess.json"
+   },
+   "npm": [],
+   "pwamart": "https://pwamart.com/apps/outreachgraph"
+  },
+  {
+   "domain": "p0dcasters.com",
+   "name": "p0dcasters",
+   "description": "A free directory of podcasts that live on their own domains — no Spotify, no Anchor, no Buzzsprout. Every show is self-hosted. Listen in the browser.",
+   "category": "media",
+   "url": "https://p0dcasters.com/",
+   "live": true,
+   "auth": {
+    "kind": "oauth",
+    "provider": "coinpay",
+    "issuer": "https://coinpayportal.com"
+   },
+   "surfaces": {
+    "web": "https://p0dcasters.com/",
+    "api": null,
+    "openapi": "https://p0dcasters.com/openapi.json",
+    "mcp": "https://p0dcasters.com/api/mcp",
+    "mcp_tools": 10,
+    "openmcp": "https://p0dcasters.com/.well-known/openmcp.json",
+    "llms": "https://p0dcasters.com/llms.txt",
+    "install": "curl -fsSL https://p0dcasters.com/install.sh | sh",
+    "pwa": true,
+    "openaccess": "https://p0dcasters.com/.well-known/openaccess.json"
+   },
+   "npm": [
+    "@profullstack/submit-feed@0.1.3"
+   ],
+   "pwamart": "https://pwamart.com/apps/p0dcasters"
+  },
+  {
+   "domain": "pairux.com",
+   "name": "PairUX",
+   "description": "Real-time screen sharing with simultaneous remote mouse and keyboard control. Like Screenhero, but open source. Available for macOS, Windows, and Linux.",
+   "category": "communication",
+   "url": "https://pairux.com/",
+   "live": true,
+   "auth": {
+    "kind": "oauth",
+    "provider": "coinpay",
+    "issuer": "https://coinpayportal.com"
+   },
+   "surfaces": {
+    "web": "https://pairux.com/",
+    "api": null,
+    "openapi": null,
+    "mcp": null,
+    "mcp_tools": null,
+    "openmcp": null,
+    "llms": "https://pairux.com/llms.txt",
+    "install": null,
+    "pwa": true,
+    "openaccess": "https://pairux.com/.well-known/openaccess.json"
+   },
+   "npm": [
+    "@profullstack/pairux@0.1.0"
+   ],
+   "pwamart": "https://pwamart.com/apps/pairux"
+  },
+  {
+   "domain": "phonenumbers.bot",
+   "name": "phonenumbers.bot",
+   "description": "Rent real physical SIM cards for your AI agents. Works for 2FA and verification on platforms that block VOIP numbers. SMS &amp; voice API access.",
+   "category": "communication",
+   "url": "https://phonenumbers.bot/",
+   "live": true,
+   "auth": {
+    "kind": "oauth",
+    "provider": "coinpay",
+    "issuer": "https://coinpayportal.com"
+   },
+   "surfaces": {
+    "web": "https://phonenumbers.bot/",
+    "api": null,
+    "openapi": null,
+    "mcp": null,
+    "mcp_tools": null,
+    "openmcp": null,
+    "llms": null,
+    "install": null,
+    "pwa": false,
+    "openaccess": "https://phonenumbers.bot/.well-known/openaccess.json"
+   },
+   "npm": [],
+   "pwamart": "https://pwamart.com/apps/phonenumbers-bot"
+  },
+  {
+   "domain": "postammo.com",
+   "name": "PostAmmo",
+   "description": "Generate viral hot takes for social media. PostAmmo gives you a strong opinion when you don&#x27;t have one.",
+   "category": "business",
+   "url": "https://postammo.com/",
+   "live": true,
+   "auth": {
+    "kind": "oauth",
+    "provider": "coinpay",
+    "issuer": "https://coinpayportal.com"
+   },
+   "surfaces": {
+    "web": "https://postammo.com/",
+    "api": null,
+    "openapi": null,
+    "mcp": null,
+    "mcp_tools": null,
+    "openmcp": null,
+    "llms": null,
+    "install": null,
+    "pwa": true,
+    "openaccess": "https://postammo.com/.well-known/openaccess.json"
+   },
+   "npm": [],
+   "pwamart": "https://pwamart.com/apps/postammo"
+  },
+  {
+   "domain": "profullstack.com",
+   "name": "Profullstack",
+   "description": "Profullstack is an agentic engineering firm. Senior engineers run fleets of AI coding agents on your codebase, with 30 years of Yahoo!, IBM, and PayPal rigor behind every merge.",
+   "category": "developer-tools",
+   "url": "https://profullstack.com/",
+   "live": true,
+   "auth": {
+    "kind": "oauth",
+    "provider": "coinpay",
+    "issuer": "https://coinpayportal.com"
+   },
+   "surfaces": {
+    "web": "https://profullstack.com/",
+    "api": null,
+    "openapi": null,
+    "mcp": null,
+    "mcp_tools": null,
+    "openmcp": null,
+    "llms": null,
+    "install": "curl -fsSL https://profullstack.com/install.sh | sh",
+    "pwa": false,
+    "openaccess": "https://profullstack.com/.well-known/openaccess.json"
+   },
+   "npm": [
+    "@profullstack/bridges@0.2.0",
+    "@profullstack/mcp-server@1.5.1",
+    "@profullstack/stack@0.3.0"
+   ],
+   "pwamart": null
+  },
+  {
+   "domain": "pwamart.com",
+   "name": "pwamart",
+   "description": "Find and install Progressive Web Apps on any phone, tablet or computer. No app store review, no 30% cut, nothing to root.",
+   "category": "utilities",
+   "url": "https://pwamart.com/",
+   "live": true,
+   "auth": {
+    "kind": "oauth",
+    "provider": "coinpay",
+    "issuer": "https://coinpayportal.com"
+   },
+   "surfaces": {
+    "web": "https://pwamart.com/",
+    "api": "https://pwamart.com/api/v1",
+    "openapi": null,
+    "mcp": "https://pwamart.com/mcp",
+    "mcp_tools": 7,
+    "openmcp": null,
+    "llms": "https://pwamart.com/llms.txt",
+    "install": "curl -fsSL https://pwamart.com/install.sh | sh",
+    "pwa": true,
+    "openaccess": null
+   },
+   "npm": [
+    "@profullstack/pwamart@0.1.1",
+    "@profullstack/pwamart-mcp@0.1.1"
+   ],
+   "pwamart": "https://pwamart.com/apps/pwamart"
+  },
+  {
+   "domain": "qaaas.dev",
+   "name": "QAaaS",
+   "description": "QAaaS.dev runs an AI browser QA agent from plain-English instructions: it tests a feature URL, files GitHub issues for real bugs with repro steps and evidence, and with PRaaS (Pull Requests as a Service) generates fix PRs. Pay per run.",
+   "category": "developer-tools",
+   "url": "https://qaaas.dev/",
+   "live": true,
+   "auth": {
+    "kind": "oauth",
+    "provider": "coinpay",
+    "issuer": "https://coinpayportal.com"
+   },
+   "surfaces": {
+    "web": "https://qaaas.dev/",
+    "api": null,
+    "openapi": null,
+    "mcp": null,
+    "mcp_tools": null,
+    "openmcp": null,
+    "llms": "https://qaaas.dev/llms.txt",
+    "install": null,
+    "pwa": false,
+    "openaccess": "https://qaaas.dev/.well-known/openaccess.json"
+   },
+   "npm": [],
+   "pwamart": null
+  },
+  {
+   "domain": "qrypt.chat",
+   "name": "QryptChat",
+   "description": "Quantum-resistant, end-to-end encrypted messaging.",
+   "category": "communication",
+   "url": "https://qrypt.chat/",
+   "live": false,
+   "auth": {
+    "kind": "oauth",
+    "provider": "coinpay",
+    "issuer": "https://coinpayportal.com"
+   },
+   "surfaces": {
+    "web": "https://qrypt.chat/",
+    "api": null,
+    "openapi": null,
+    "mcp": null,
+    "mcp_tools": null,
+    "openmcp": null,
+    "llms": null,
+    "install": null,
+    "pwa": false,
+    "openaccess": null
+   },
+   "npm": [
+    "@profullstack/qrypt-decrypt@1.1.3"
+   ],
+   "pwamart": "https://pwamart.com/apps/qryptchat"
+  },
+  {
+   "domain": "r4ck.dev",
+   "name": "r4ck",
+   "description": "Every VPS, cloud, bare metal, GPU and PaaS offer for sale, searchable by spec, price and place. Same query on the page, the API, the CLI and MCP.",
+   "category": "developer-tools",
+   "url": "https://r4ck.dev/",
+   "live": true,
+   "auth": {
+    "kind": "oauth",
+    "provider": "coinpay",
+    "issuer": "https://coinpayportal.com"
+   },
+   "surfaces": {
+    "web": "https://r4ck.dev/",
+    "api": "https://r4ck.dev/api/v1",
+    "openapi": null,
+    "mcp": "https://r4ck.dev/api/mcp",
+    "mcp_tools": 13,
+    "openmcp": "https://r4ck.dev/.well-known/openmcp.json",
+    "llms": "https://r4ck.dev/llms.txt",
+    "install": null,
+    "pwa": true,
+    "openaccess": null
+   },
+   "npm": [
+    "@profullstack/r4ck@0.1.0"
+   ],
+   "pwamart": "https://pwamart.com/apps/r4ck"
+  },
+  {
+   "domain": "readm3.com",
+   "name": "readm3",
+   "description": "Write and edit Markdown, share view or edit links, and keep every version. Work with your team in the browser, CLI, API, and MCP.",
+   "category": "news",
+   "url": "https://readm3.com/",
+   "live": true,
+   "auth": {
+    "kind": "oauth",
+    "provider": "coinpay",
+    "issuer": "https://coinpayportal.com"
+   },
+   "surfaces": {
+    "web": "https://readm3.com/",
+    "api": null,
+    "openapi": null,
+    "mcp": null,
+    "mcp_tools": null,
+    "openmcp": null,
+    "llms": "https://readm3.com/llms.txt",
+    "install": null,
+    "pwa": false,
+    "openaccess": null
+   },
+   "npm": [
+    "@profullstack/readm3@0.9.0"
+   ],
+   "pwamart": null
+  },
+  {
+   "domain": "recipepdfs.com",
+   "name": "RecipePDFs",
+   "description": "Publish, browse, and buy free or paid recipe PDF cookbooks with Coinpay.",
+   "category": "lifestyle",
+   "url": "https://recipepdfs.com/",
+   "live": true,
+   "auth": {
+    "kind": "oauth",
+    "provider": "coinpay",
+    "issuer": "https://coinpayportal.com"
+   },
+   "surfaces": {
+    "web": "https://recipepdfs.com/",
+    "api": null,
+    "openapi": null,
+    "mcp": "https://recipepdfs.com/api/mcp",
+    "mcp_tools": 3,
+    "openmcp": null,
+    "llms": "https://recipepdfs.com/llms.txt",
+    "install": null,
+    "pwa": false,
+    "openaccess": "https://recipepdfs.com/.well-known/openaccess.json"
+   },
+   "npm": [],
+   "pwamart": null
+  },
+  {
+   "domain": "reeleel.com",
+   "name": "ReelEel",
+   "description": "Upload a whole game, point at your kid once, and get the minutes worth watching.",
+   "category": "media",
+   "url": "https://reeleel.com/",
+   "live": true,
+   "auth": {
+    "kind": "oauth",
+    "provider": "coinpay",
+    "issuer": "https://coinpayportal.com"
+   },
+   "surfaces": {
+    "web": "https://reeleel.com/",
+    "api": "https://reeleel.com/api/v1",
+    "openapi": null,
+    "mcp": null,
+    "mcp_tools": null,
+    "openmcp": null,
+    "llms": null,
+    "install": null,
+    "pwa": true,
+    "openaccess": "https://reeleel.com/.well-known/openaccess.json"
+   },
+   "npm": [],
+   "pwamart": null
+  },
+  {
+   "domain": "rssamplifier.com",
+   "name": "RSS Amplifier",
+   "description": "Submit a URL, a list of URLs or an OPML file. Every blog gets its own page, and the whole directory is available as JSON, OPML and plain text for AI agents.",
+   "category": "news",
+   "url": "https://rssamplifier.com/",
+   "live": true,
+   "auth": {
+    "kind": "oauth",
+    "provider": "coinpay",
+    "issuer": "https://coinpayportal.com"
+   },
+   "surfaces": {
+    "web": "https://rssamplifier.com/",
+    "api": null,
+    "openapi": null,
+    "mcp": "https://rssamplifier.com/api/mcp",
+    "mcp_tools": 18,
+    "openmcp": "https://rssamplifier.com/.well-known/openmcp.json",
+    "llms": "https://rssamplifier.com/llms.txt",
+    "install": "curl -fsSL https://rssamplifier.com/install.sh | sh",
+    "pwa": true,
+    "openaccess": "https://rssamplifier.com/.well-known/openaccess.json"
+   },
+   "npm": [
+    "@profullstack/rssamplifier@0.4.0",
+    "@profullstack/submit-feed@0.1.3"
+   ],
+   "pwamart": "https://pwamart.com/apps/rss-amplifier"
+  },
+  {
+   "domain": "saasrow.com",
+   "name": "SaaSRow",
+   "description": "Discover, vote on, and submit software in the SaaSRow directory. Free listings with DoFollow backlinks.",
+   "category": "business",
+   "url": "https://saasrow.com/",
+   "live": true,
+   "auth": {
+    "kind": "oauth",
+    "provider": "coinpay",
+    "issuer": "https://coinpayportal.com"
+   },
+   "surfaces": {
+    "web": "https://saasrow.com/",
+    "api": "https://saasrow.com/api/v1",
+    "openapi": null,
+    "mcp": null,
+    "mcp_tools": null,
+    "openmcp": "https://saasrow.com/.well-known/openmcp.json",
+    "llms": "https://saasrow.com/llms.txt",
+    "install": null,
+    "pwa": false,
+    "openaccess": "https://saasrow.com/.well-known/openaccess.json"
+   },
+   "npm": [
+    "@profullstack/saasrow@0.1.0"
+   ],
+   "pwamart": null
+  },
+  {
+   "domain": "sh1pt.com",
+   "name": "sh1pt",
+   "description": "One codebase → every store, registry, CDN, and channel. Ads on every network. Cloud infra on demand. AI agents tighten the loop.",
+   "category": "developer-tools",
+   "url": "https://sh1pt.com/",
+   "live": true,
+   "auth": {
+    "kind": "oauth",
+    "provider": "coinpay",
+    "issuer": "https://coinpayportal.com"
+   },
+   "surfaces": {
+    "web": "https://sh1pt.com/",
+    "api": null,
+    "openapi": null,
+    "mcp": null,
+    "mcp_tools": null,
+    "openmcp": null,
+    "llms": null,
+    "install": "curl -fsSL https://sh1pt.com/install.sh | sh",
+    "pwa": false,
+    "openaccess": "https://sh1pt.com/.well-known/openaccess.json"
+   },
+   "npm": [
+    "@profullstack/sh1pt@0.3.5",
+    "@profullstack/sh1pt-core@0.3.5",
+    "@profullstack/sh1pt-openapi@0.3.5"
+   ],
+   "pwamart": null
+  },
+  {
+   "domain": "smshub.dev",
+   "name": "SMSHub",
+   "description": "Send and receive SMS from any device. Multi-provider support with Twilio, Telnyx, and real SIM numbers. Built for developers, designed for everyone.",
+   "category": "communication",
+   "url": "https://smshub.dev/",
+   "live": true,
+   "auth": {
+    "kind": "oauth",
+    "provider": "coinpay",
+    "issuer": "https://coinpayportal.com"
+   },
+   "surfaces": {
+    "web": "https://smshub.dev/",
+    "api": null,
+    "openapi": null,
+    "mcp": null,
+    "mcp_tools": null,
+    "openmcp": null,
+    "llms": null,
+    "install": "curl -fsSL https://smshub.dev/install.sh | sh",
+    "pwa": true,
+    "openaccess": "https://smshub.dev/.well-known/openaccess.json"
+   },
+   "npm": [],
+   "pwamart": "https://pwamart.com/apps/smshub"
+  },
+  {
+   "domain": "spl00f.com",
+   "name": "spl00f",
+   "description": "Open schemas, primitives, and conventions for coordination between humans, AI agents, plugins, payment systems, and hosted products.",
+   "category": "developer-tools",
+   "url": "https://spl00f.com/",
+   "live": true,
+   "auth": {
+    "kind": "oauth",
+    "provider": "coinpay",
+    "issuer": "https://coinpayportal.com"
+   },
+   "surfaces": {
+    "web": "https://spl00f.com/",
+    "api": null,
+    "openapi": null,
+    "mcp": null,
+    "mcp_tools": null,
+    "openmcp": null,
+    "llms": null,
+    "install": null,
+    "pwa": false,
+    "openaccess": null
+   },
+   "npm": [],
+   "pwamart": null
+  },
+  {
+   "domain": "threatcrush.com",
+   "name": "ThreatCrush",
+   "description": "Open-source agent that detects attacks in your server logs and inbound connections, bans attackers at the firewall, checks hardening, scans code and spot-checks your URLs — with alerts and a cloud dashboard.",
+   "category": "security",
+   "url": "https://threatcrush.com/",
+   "live": true,
+   "auth": {
+    "kind": "oauth",
+    "provider": "coinpay",
+    "issuer": "https://coinpayportal.com"
+   },
+   "surfaces": {
+    "web": "https://threatcrush.com/",
+    "api": "https://threatcrush.com/api",
+    "openapi": null,
+    "mcp": null,
+    "mcp_tools": null,
+    "openmcp": null,
+    "llms": "https://threatcrush.com/llms.txt",
+    "install": "curl -fsSL https://threatcrush.com/install.sh | sh",
+    "pwa": true,
+    "openaccess": "https://threatcrush.com/.well-known/openaccess.json"
+   },
+   "npm": [
+    "@profullstack/threatcrush@0.13.21"
+   ],
+   "pwamart": "https://pwamart.com/apps/threatcrush"
+  },
+  {
+   "domain": "tipoffwatch.com",
+   "name": "TipoffWatch",
+   "description": "Follow any team in the world and get told before they play. Free.",
+   "category": "news",
+   "url": "https://tipoffwatch.com/",
+   "live": true,
+   "auth": {
+    "kind": "oauth",
+    "provider": "coinpay",
+    "issuer": "https://coinpayportal.com"
+   },
+   "surfaces": {
+    "web": "https://tipoffwatch.com/",
+    "api": "https://tipoffwatch.com/api/v1",
+    "openapi": null,
+    "mcp": null,
+    "mcp_tools": null,
+    "openmcp": null,
+    "llms": "https://tipoffwatch.com/llms.txt",
+    "install": null,
+    "pwa": true,
+    "openaccess": "https://tipoffwatch.com/.well-known/openaccess.json"
+   },
+   "npm": [],
+   "pwamart": "https://pwamart.com/apps/tipoffwatch"
+  },
+  {
+   "domain": "tronbrowser.dev",
+   "name": "TronBrowser",
+   "description": "TronBrowser is an open-source, privacy-first, AI-native web browser built on Ungoogled Chromium by Profullstack, Inc. No telemetry, no ads, no sponsored tabs. Bring your own AI keys or run local.",
+   "category": "utilities",
+   "url": "https://tronbrowser.dev/",
+   "live": true,
+   "auth": {
+    "kind": "oauth",
+    "provider": "coinpay",
+    "issuer": "https://coinpayportal.com"
+   },
+   "surfaces": {
+    "web": "https://tronbrowser.dev/",
+    "api": null,
+    "openapi": null,
+    "mcp": null,
+    "mcp_tools": null,
+    "openmcp": "https://tronbrowser.dev/.well-known/openmcp.json",
+    "llms": "https://tronbrowser.dev/llms.txt",
+    "install": "curl -fsSL https://tronbrowser.dev/install.sh | sh",
+    "pwa": true,
+    "openaccess": "https://tronbrowser.dev/.well-known/openaccess.json"
+   },
+   "npm": [],
+   "pwamart": "https://pwamart.com/apps/tronbrowser"
+  },
+  {
+   "domain": "typeheard.com",
+   "name": "typeheard",
+   "description": "Transcribe interviews, lectures, podcasts and voice memos you already have. The first 3 minutes of any file are free; after that about $1.00 an hour, no subscription.",
+   "category": "ai",
+   "url": "https://typeheard.com/",
+   "live": true,
+   "auth": {
+    "kind": "oauth",
+    "provider": "coinpay",
+    "issuer": "https://coinpayportal.com"
+   },
+   "surfaces": {
+    "web": "https://typeheard.com/",
+    "api": null,
+    "openapi": null,
+    "mcp": null,
+    "mcp_tools": null,
+    "openmcp": null,
+    "llms": "https://typeheard.com/llms.txt",
+    "install": null,
+    "pwa": true,
+    "openaccess": null
+   },
+   "npm": [
+    "@profullstack/media2markdown-core@0.1.0",
+    "@profullstack/media2markdown-mcp@0.1.0",
+    "@profullstack/media2md@0.1.0"
+   ],
+   "pwamart": "https://pwamart.com/apps/typeheard"
+  },
+  {
+   "domain": "ugig.net",
+   "name": "ugig",
+   "description": "Connect with skilled professionals who leverage AI tools to deliver high-quality work. Post gigs, apply to projects, and build your AI-powered career.",
+   "category": "business",
+   "url": "https://ugig.net/",
+   "live": true,
+   "auth": {
+    "kind": "oauth",
+    "provider": "coinpay",
+    "issuer": "https://coinpayportal.com"
+   },
+   "surfaces": {
+    "web": "https://ugig.net/",
+    "api": null,
+    "openapi": "https://ugig.net/openapi.json",
+    "mcp": null,
+    "mcp_tools": null,
+    "openmcp": null,
+    "llms": "https://ugig.net/llms.txt",
+    "install": "curl -fsSL https://ugig.net/install.sh | sh",
+    "pwa": true,
+    "openaccess": "https://ugig.net/.well-known/openaccess.json"
+   },
+   "npm": [],
+   "pwamart": "https://pwamart.com/apps/ugig-net"
+  },
+  {
+   "domain": "vipvap.xyz",
+   "name": "vipvap",
+   "description": "One API key, one endpoint. vipvap sends verification codes from a domain we already trust — so your signup and login flows work today, not after a week of DNS configuration.",
+   "category": "communication",
+   "url": "https://vipvap.xyz/",
+   "live": true,
+   "auth": {
+    "kind": "oauth",
+    "provider": "coinpay",
+    "issuer": "https://coinpayportal.com"
+   },
+   "surfaces": {
+    "web": "https://vipvap.xyz/",
+    "api": null,
+    "openapi": null,
+    "mcp": null,
+    "mcp_tools": null,
+    "openmcp": null,
+    "llms": null,
+    "install": null,
+    "pwa": false,
+    "openaccess": null
+   },
+   "npm": [],
+   "pwamart": null
+  },
+  {
+   "domain": "vu1nz.com",
+   "name": "vu1nz",
+   "description": "One GitHub Action, two scanners: 17 CI/CD workflow security checks PLUS a malware sweep of every new npm / pip / cargo / gem / go.mod / composer package added in a PR. Catches what CodeQL, Dependabot, and Snyk miss. 14-day free trial, $100/month per GitHub org. Card or crypto.",
+   "category": "security",
+   "url": "https://vu1nz.com/",
+   "live": true,
+   "auth": {
+    "kind": "oauth",
+    "provider": "coinpay",
+    "issuer": "https://coinpayportal.com"
+   },
+   "surfaces": {
+    "web": "https://vu1nz.com/",
+    "api": null,
+    "openapi": null,
+    "mcp": "https://vu1nz.com/api/mcp",
+    "mcp_tools": 7,
+    "openmcp": "https://vu1nz.com/.well-known/openmcp.json",
+    "llms": null,
+    "install": null,
+    "pwa": false,
+    "openaccess": "https://vu1nz.com/.well-known/openaccess.json"
+   },
+   "npm": [],
+   "pwamart": null
+  },
+  {
+   "domain": "watchnews.now",
+   "name": "WatchNews",
+   "description": "Follow a section or a newsroom and read what they actually published, from free sources only. Free.",
+   "category": "news",
+   "url": "https://watchnews.now/",
+   "live": true,
+   "auth": {
+    "kind": "oauth",
+    "provider": "coinpay",
+    "issuer": "https://coinpayportal.com"
+   },
+   "surfaces": {
+    "web": "https://watchnews.now/",
+    "api": "https://watchnews.now/api/v1",
+    "openapi": null,
+    "mcp": null,
+    "mcp_tools": null,
+    "openmcp": null,
+    "llms": "https://watchnews.now/llms.txt",
+    "install": null,
+    "pwa": true,
+    "openaccess": "https://watchnews.now/.well-known/openaccess.json"
+   },
+   "npm": [],
+   "pwamart": "https://pwamart.com/apps/watchnews"
+  },
+  {
+   "domain": "weedforcrypto.com",
+   "name": "WeedForCrypto",
+   "description": "Find licensed dispensaries that accept Bitcoin, Lightning, and stablecoin payments through CoinPay.",
+   "category": "shopping",
+   "url": "https://weedforcrypto.com/",
+   "live": true,
+   "auth": {
+    "kind": "oauth",
+    "provider": "coinpay",
+    "issuer": "https://coinpayportal.com"
+   },
+   "surfaces": {
+    "web": "https://weedforcrypto.com/",
+    "api": null,
+    "openapi": null,
+    "mcp": null,
+    "mcp_tools": null,
+    "openmcp": null,
+    "llms": null,
+    "install": null,
+    "pwa": true,
+    "openaccess": "https://weedforcrypto.com/.well-known/openaccess.json"
+   },
+   "npm": [],
+   "pwamart": "https://pwamart.com/apps/weedforcrypto"
+  }
+ ]
+}

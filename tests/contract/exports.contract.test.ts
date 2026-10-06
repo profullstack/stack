@@ -81,6 +81,18 @@ const EXPECTED_EXPORTS: Record<string, string[]> = {
     "CrawlproofApiError",
     "CRAWLPROOF_DEFAULT_BASE_URL",
   ],
+  "./fleet": [
+    "FLEET",
+    "FLEET_AUTH",
+    "listServices",
+    "getService",
+    "searchServices",
+    "categories",
+    "FLEET_EVENT_SERVICE_UPDATED",
+    "FLEET_SIGNATURE_HEADER",
+    "signFleetEvent",
+    "fleetServiceUpdatedEvent",
+  ],
 };
 
 type ExportCondition = { types?: string; default?: string };
@@ -109,7 +121,7 @@ function resolveDist(rel: string | undefined, label: string): string {
 describe("exports map ↔ dist files", () => {
   it("declares exactly the documented module set", () => {
     expect([...subpaths()].sort()).toEqual(
-      [".", "./coinpay", "./crawlproof", "./email", "./referrals", "./supabase"].sort(),
+      [".", "./coinpay", "./crawlproof", "./email", "./fleet", "./referrals", "./supabase"].sort(),
     );
   });
 
@@ -184,7 +196,7 @@ describe("loaded builds are functional", () => {
     };
     expect(mod.STACK_VERSION).toBe(pkgVersion());
     expect([...mod.STACK_MODULES].sort()).toEqual(
-      ["coinpay", "crawlproof", "email", "referrals", "supabase"].sort(),
+      ["coinpay", "crawlproof", "email", "fleet", "referrals", "supabase"].sort(),
     );
   });
 
