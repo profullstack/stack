@@ -23,6 +23,7 @@ import { createCrawlproofClient } from "@profullstack/stack/crawlproof";
 | `@profullstack/stack/supabase` | supabase-ssr client/server/middleware factories |
 | `@profullstack/stack/coinpay` | CoinPayPortal API client, webhook verification, CoinPay OAuth login helpers |
 | `@profullstack/stack/crawlproof` | crawlproof.com audit API client |
+| `@profullstack/stack/fleet` | The catalog of all 62 Profullstack services (web, API, MCP, llms.txt, installer, npm, pwamart listing), `listServices` / `getService` / `searchServices`, and signed `fleet.service.updated` webhook events. Every service signs in with CoinPay OAuth (`FLEET_AUTH`). |
 
 Framework peers (`next`, `react`, `@supabase/ssr`) are optional peer dependencies — install only what your app uses.
 

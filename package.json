@@ -1,7 +1,7 @@
 {
   "name": "@profullstack/stack",
-  "version": "0.3.0",
-  "description": "The Profullstack open source stack — shared modules for Next.js/Node apps: referrals, email, supabase, coinpay, crawlproof.",
+  "version": "0.4.0",
+  "description": "The Profullstack open source stack \u2014 shared modules for Next.js/Node apps: referrals, email, supabase, coinpay, crawlproof.",
   "license": "MIT",
   "type": "module",
   "exports": {
@@ -65,7 +65,17 @@
         "default": "./dist/crawlproof/index.cjs"
       }
     },
-    "./package.json": "./package.json"
+    "./package.json": "./package.json",
+    "./fleet": {
+      "import": {
+        "types": "./dist/fleet/index.d.ts",
+        "default": "./dist/fleet/index.js"
+      },
+      "require": {
+        "types": "./dist/fleet/index.d.cts",
+        "default": "./dist/fleet/index.cjs"
+      }
+    }
   },
   "files": [
     "dist"

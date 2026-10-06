@@ -8,6 +8,7 @@ export default defineConfig({
     "supabase/index": "src/supabase/index.ts",
     "coinpay/index": "src/coinpay/index.ts",
     "crawlproof/index": "src/crawlproof/index.ts",
+    "fleet/index": "src/fleet/index.ts",
   },
   format: ["esm", "cjs"],
   dts: true,
