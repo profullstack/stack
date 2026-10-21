@@ -53,32 +53,46 @@ const coinpay = createCoinPayClient({
 });
 ```
 
-#### `coinpay.createCheckout(input): Promise<CreateCheckoutResult>`
+#### `coinpay.createCheckout(input): Promise<CreateCheckoutResult>` (0.5.0+)
 
-`POST /api/payments/create`, then returns the URL to send the customer to.
+`POST /api/checkout/sessions`: a hosted checkout session. The buyer picks any
+coin the business has a wallet for, or PayPal when the business has it
+connected. `customerEmail`, `accountId` and `property` are required (the
+client throws `CoinPayApiError` with `detail` `MISSING_CUSTOMER_EMAIL` /
+`MISSING_ACCOUNT_ID` / `MISSING_PROPERTY` before any request). For a guest
+checkout, pass the email as `accountId`.
 
 ```ts
-const { paymentId, checkoutUrl, payment } = await coinpay.createCheckout({
-  amountUsd: 25,                    // USD dollars
-  currency: "usdc_pol",             // crypto coin code (see listCoins)
-  paymentMethod: "both",            // "crypto" | "card" | "both" (default "both")
-  description: "GoldVPN Plus — Monthly",
-  metadata: { plan: "plus", cycle: "monthly" }, // echoed back in webhooks
-  redirectUrl: "https://app.example/thanks",    // crypto-leg redirect
-  successUrl: "https://app.example/thanks",     // Stripe card-leg return URLs
-  cancelUrl: "https://app.example/signup",
-  webhookUrl, businessId, expiresIn,            // optional
+const { sessionId, checkoutUrl, methods } = await coinpay.createCheckout({
+  amountUsd: 299,                          // USD dollars
+  customerEmail: user.email,               // required
+  accountId: user.id,                      // required (guests: the email)
+  property: "profullstack.com",            // required: the site hostname
+  description: "Power Key",
+  metadata: { sku: "power-key" },          // echoed in webhook data.metadata
+  successUrl: "https://profullstack.com/shop/success?session={CHECKOUT_SESSION_ID}",
+  cancelUrl: "https://profullstack.com/shop",
+  expiresInMinutes: 60,                    // 15-120, default 60
+  allowedMethods: ["CRYPTO", "PAYPAL"],    // optional restriction
 });
-// checkoutUrl = payment.stripe_checkout_url ?? payment.checkout_url
-//             ?? `${baseUrl}/pay/${paymentId}`
+// checkoutUrl = "https://coinpayportal.com/checkout/cs_..."
 ```
 
-Throws `CoinPayApiError` (`.status`, `.detail`) on non-OK responses,
-`success: false` envelopes, or a missing `payment.id`.
+Throws `CoinPayApiError` on portal errors, e.g. 400 `NO_PAYMENT_METHODS` when
+the business has no wallet and no PayPal.
 
-#### `coinpay.getCheckout(paymentId): Promise<GetCheckoutResult>`
+#### `coinpay.getCheckout(sessionId): Promise<GetCheckoutResult>`
 
-`GET /api/payments/<id>` → `{ paymentId, status, payment }`.
+`GET /api/checkout/sessions/<id>` with the key (owner view) ->
+`{ sessionId, status: "open" | "paid" | "expired", paid, paymentId, paypalTransactionId, session }`.
+
+#### `coinpay.createPayment(input)` / `coinpay.getPayment(paymentId)`
+
+The single-coin `POST /api/payments/create` / `GET /api/payments/<id>` calls.
+These were `createCheckout` / `getCheckout` before 0.5.0; inputs and results
+are unchanged (`{ amountUsd, currency, paymentMethod, ... }` ->
+`{ paymentId, checkoutUrl, payment }`), plus optional `customerEmail`,
+`accountId`, `property`.
 
 #### `coinpay.listCoins(options?): Promise<CoinPayCoin[]>`
 
@@ -117,6 +131,25 @@ export async function POST(req: Request) {
   return Response.json({ ok: true });
 }
 ```
+
+Or in one step, with the checkout-session fields flattened:
+
+```ts
+import { verifyAndReadCoinPayWebhook } from "@profullstack/stack/coinpay";
+
+const hook = verifyAndReadCoinPayWebhook({ rawBody, signature, secret });
+if (!hook) return Response.json({ error: "invalid_signature" }, { status: 401 });
+if (hook.paid) {
+  // hook.checkoutSessionId, hook.customerEmail, hook.accountId, hook.property,
+  // hook.paymentId (never the event id), hook.rail ("crypto" | "paypal"),
+  // hook.amountUsd, hook.metadata
+}
+```
+
+`readCoinPayWebhook(rawBodyOrEvent)` does the same without verifying. It reads
+the nested `data` first and falls back to the legacy flat shape. `paid` is true
+for `payment.confirmed` and `payment.forwarded` (PayPal captures arrive as
+`payment.confirmed` with status `completed`).
 
 Scheme (identical in goldvpn, the `@coinpay/sdk`, and every app verifier):
 header `X-CoinPay-Signature: t=<unix>,v1=<hex>`,

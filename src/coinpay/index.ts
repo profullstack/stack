@@ -20,24 +20,37 @@ export {
 } from "./client.js";
 export type {
   CoinPayClient,
+  CoinPayCheckoutSession,
+  CoinPayCheckoutSessionStatus,
   CoinPayClientConfig,
   CoinPayCoin,
   CoinPayFetch,
   CoinPayPayment,
   CreateCheckoutInput,
   CreateCheckoutResult,
+  CreatePaymentInput,
+  CreatePaymentResult,
   GetCheckoutResult,
+  GetPaymentResult,
   ListCoinsOptions,
 } from "./client.js";
 
 export {
+  COINPAY_PAID_EVENT_TYPES,
   COINPAY_WEBHOOK_SIGNATURE_HEADER,
   COINPAY_WEBHOOK_TOLERANCE_SECONDS,
   parseCoinPayWebhookEvent,
+  readCoinPayWebhook,
   signCoinPayWebhook,
+  verifyAndReadCoinPayWebhook,
   verifyCoinPayWebhook,
 } from "./webhook.js";
-export type { CoinPayWebhookEvent, VerifyCoinPayWebhookOptions } from "./webhook.js";
+export type {
+  CoinPayWebhookEvent,
+  CoinPayWebhookSummary,
+  VerifyAndReadCoinPayWebhookOptions,
+  VerifyCoinPayWebhookOptions,
+} from "./webhook.js";
 
 export {
   COINPAY_DEFAULT_ISSUER,

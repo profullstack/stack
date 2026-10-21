@@ -66,17 +66,17 @@ function json(body: unknown, status = 200): Response {
 const API_KEY = "cp_live_testkey123";
 
 // ---------------------------------------------------------------------------
-// POST /api/payments/create — createCheckout
+// POST /api/payments/create — createPayment
 // Route: coinpayportal/src/app/api/payments/create/route.ts
 // ---------------------------------------------------------------------------
 
-describe("createCheckout ↔ POST /api/payments/create", () => {
+describe("createPayment ↔ POST /api/payments/create", () => {
   it("POSTs to <root>/api/payments/create with Bearer auth and JSON content type", async () => {
     const { fetch, calls } = recordFetch(() =>
       json({ success: true, payment: { id: "pay_1" } }, 201),
     );
     const client = createCoinPayClient({ apiKey: API_KEY, fetch });
-    await client.createCheckout({ amountUsd: 25, currency: "usdc_pol" });
+    await client.createPayment({ amountUsd: 25, currency: "usdc_pol" });
 
     expect(calls).toHaveLength(1);
     // Default site root is the hosted portal; API lives under <root>/api.
@@ -95,7 +95,7 @@ describe("createCheckout ↔ POST /api/payments/create", () => {
       json({ success: true, payment: { id: "pay_1" } }, 201),
     );
     const client = createCoinPayClient({ apiKey: API_KEY, fetch });
-    await client.createCheckout({
+    await client.createPayment({
       amountUsd: 25,
       currency: "usdc_pol",
       paymentMethod: "card",
@@ -142,7 +142,7 @@ describe("createCheckout ↔ POST /api/payments/create", () => {
       json({ success: true, payment: { id: "pay_1" } }, 201),
     );
     const client = createCoinPayClient({ apiKey: API_KEY, fetch });
-    await client.createCheckout({ amountUsd: 10, currency: "btc" });
+    await client.createPayment({ amountUsd: 10, currency: "btc" });
     const body = JSON.parse(String(calls[0]!.init.body)) as Record<string, unknown>;
     // The route falls back to 'crypto' when payment_method is missing/invalid
     // (payments/create/route.ts:237-239); the client's contract is "both".
@@ -174,7 +174,7 @@ describe("createCheckout ↔ POST /api/payments/create", () => {
     };
     const { fetch, calls } = recordFetch(() => json(portalResponse, 201));
     const client = createCoinPayClient({ apiKey: API_KEY, fetch });
-    const result = await client.createCheckout({ amountUsd: 25, currency: "btc" });
+    const result = await client.createPayment({ amountUsd: 25, currency: "btc" });
 
     expect(calls).toHaveLength(1);
     expect(result.paymentId).toBe("8f7b9c2d-aaaa-bbbb-cccc-ddddeeeeffff");
@@ -191,7 +191,7 @@ describe("createCheckout ↔ POST /api/payments/create", () => {
       ),
     );
     const clientA = createCoinPayClient({ apiKey: API_KEY, fetch: withCheckoutUrl.fetch });
-    const a = await clientA.createCheckout({ amountUsd: 5, currency: "eth" });
+    const a = await clientA.createPayment({ amountUsd: 5, currency: "eth" });
     expect(a.checkoutUrl).toBe("https://coinpayportal.com/pay/pay_2");
 
     const bare = recordFetch(() => json({ success: true, payment: { id: "pay_3" } }, 201));
@@ -200,7 +200,7 @@ describe("createCheckout ↔ POST /api/payments/create", () => {
       baseUrl: "https://pay.example.com",
       fetch: bare.fetch,
     });
-    const b = await clientB.createCheckout({ amountUsd: 5, currency: "eth" });
+    const b = await clientB.createPayment({ amountUsd: 5, currency: "eth" });
     expect(b.checkoutUrl).toBe("https://pay.example.com/pay/pay_3");
   });
 
@@ -213,7 +213,7 @@ describe("createCheckout ↔ POST /api/payments/create", () => {
       baseUrl: "https://pay.example.com/api/",
       fetch,
     });
-    const result = await client.createCheckout({ amountUsd: 1, currency: "sol" });
+    const result = await client.createPayment({ amountUsd: 1, currency: "sol" });
     expect(calls[0]!.url).toBe("https://pay.example.com/api/payments/create");
     expect(result.checkoutUrl).toBe("https://pay.example.com/pay/pay_4");
   });
@@ -226,7 +226,7 @@ describe("createCheckout ↔ POST /api/payments/create", () => {
     );
     const client = createCoinPayClient({ apiKey: API_KEY, fetch });
     const err = await client
-      .createCheckout({ amountUsd: 0, currency: "btc" })
+      .createPayment({ amountUsd: 0, currency: "btc" })
       .catch((e: unknown) => e);
     expect(err).toBeInstanceOf(CoinPayApiError);
     const apiErr = err as CoinPayApiError;
@@ -239,7 +239,7 @@ describe("createCheckout ↔ POST /api/payments/create", () => {
     const { fetch } = recordFetch(() => json({ success: true, payment: {} }, 201));
     const client = createCoinPayClient({ apiKey: API_KEY, fetch });
     await expect(
-      client.createCheckout({ amountUsd: 1, currency: "btc" }),
+      client.createPayment({ amountUsd: 1, currency: "btc" }),
     ).rejects.toThrow(/missing payment\.id/);
   });
 
@@ -247,17 +247,17 @@ describe("createCheckout ↔ POST /api/payments/create", () => {
     const { fetch } = recordFetch(() => json({ success: false, error: "weird" }, 200));
     const client = createCoinPayClient({ apiKey: API_KEY, fetch });
     await expect(
-      client.createCheckout({ amountUsd: 1, currency: "btc" }),
+      client.createPayment({ amountUsd: 1, currency: "btc" }),
     ).rejects.toThrow(CoinPayApiError);
   });
 });
 
 // ---------------------------------------------------------------------------
-// GET /api/payments/<id> — getCheckout
+// GET /api/payments/<id> — getPayment
 // Route: coinpayportal/src/app/api/payments/[id]/route.ts
 // ---------------------------------------------------------------------------
 
-describe("getCheckout ↔ GET /api/payments/<id>", () => {
+describe("getPayment ↔ GET /api/payments/<id>", () => {
   it("GETs the payment with Bearer auth and parses { success, payment }", async () => {
     // Route returns { success: true, payment } with status 200
     // (payments/[id]/route.ts:36-39).
@@ -271,7 +271,7 @@ describe("getCheckout ↔ GET /api/payments/<id>", () => {
     };
     const { fetch, calls } = recordFetch(() => json({ success: true, payment: portalPayment }));
     const client = createCoinPayClient({ apiKey: API_KEY, fetch });
-    const result = await client.getCheckout("pay_123");
+    const result = await client.getPayment("pay_123");
 
     expect(calls[0]!.url).toBe("https://coinpayportal.com/api/payments/pay_123");
     expect(calls[0]!.init.method ?? "GET").toBe("GET");
@@ -285,14 +285,14 @@ describe("getCheckout ↔ GET /api/payments/<id>", () => {
       json({ success: true, payment: { id: "pay/x y", status: "pending" } }),
     );
     const client = createCoinPayClient({ apiKey: API_KEY, fetch });
-    await client.getCheckout("pay/x y");
+    await client.getPayment("pay/x y");
     expect(calls[0]!.url).toBe("https://coinpayportal.com/api/payments/pay%2Fx%20y");
   });
 
   it("defaults status to 'pending' when the payment object omits it", async () => {
     const { fetch } = recordFetch(() => json({ success: true, payment: { id: "pay_1" } }));
     const client = createCoinPayClient({ apiKey: API_KEY, fetch });
-    const result = await client.getCheckout("pay_1");
+    const result = await client.getPayment("pay_1");
     expect(result.status).toBe("pending");
   });
 
@@ -300,7 +300,7 @@ describe("getCheckout ↔ GET /api/payments/<id>", () => {
     // Unknown payment → 404 { success: false, error } (payments/[id]/route.ts:29-34).
     const { fetch } = recordFetch(() => json({ success: false, error: "Payment not found" }, 404));
     const client = createCoinPayClient({ apiKey: API_KEY, fetch });
-    const err = await client.getCheckout("nope").catch((e: unknown) => e);
+    const err = await client.getPayment("nope").catch((e: unknown) => e);
     expect(err).toBeInstanceOf(CoinPayApiError);
     expect((err as CoinPayApiError).status).toBe(404);
     expect((err as CoinPayApiError).detail).toBe("Payment not found");
