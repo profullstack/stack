@@ -12,12 +12,16 @@
  *   import { createCoinPayClient } from "@profullstack/stack/coinpay";
  *
  *   const coinpay = createCoinPayClient({ apiKey: process.env.COINPAY_API_KEY! });
- *   const { checkoutUrl } = await coinpay.createCheckout({
+ *   // Hosted checkout session: the buyer picks any coin the business has a
+ *   // wallet for, or PayPal.
+ *   const { checkoutUrl, sessionId } = await coinpay.createCheckout({
  *     amountUsd: 25,
- *     currency: "usdc_pol",
- *     paymentMethod: "both",
- *     description: "GoldVPN Plus — Monthly",
- *     redirectUrl: "https://app.example/thanks",
+ *     customerEmail: user.email,
+ *     accountId: user.id,
+ *     property: "app.example",
+ *     description: "GoldVPN Plus, monthly",
+ *     successUrl: "https://app.example/thanks?session={CHECKOUT_SESSION_ID}",
+ *     cancelUrl: "https://app.example/pricing",
  *   });
  */
 
@@ -76,8 +80,11 @@ export interface CoinPayPayment {
   [key: string]: unknown;
 }
 
-/** Input for {@link CoinPayClient.createCheckout}. */
-export interface CreateCheckoutInput {
+/**
+ * Input for {@link CoinPayClient.createPayment}: a single-coin payment
+ * (`POST /api/payments/create`). Prefer {@link CoinPayClient.createCheckout}.
+ */
+export interface CreatePaymentInput {
   /** Amount in USD dollars (e.g. `25` = $25.00). */
   amountUsd: number;
   /** Lower-case coin code for the crypto leg, e.g. `"btc"`, `"usdc_pol"`. */
@@ -103,10 +110,16 @@ export interface CreateCheckoutInput {
   businessId?: string;
   /** Seconds until the payment expires. */
   expiresIn?: number;
+  /** Payer email; stored on the payment and echoed in its webhooks. */
+  customerEmail?: string;
+  /** Your site's user id or handle for the payer. */
+  accountId?: string;
+  /** Site hostname this payment is for. */
+  property?: string;
 }
 
-/** Result of {@link CoinPayClient.createCheckout}. */
-export interface CreateCheckoutResult {
+/** Result of {@link CoinPayClient.createPayment}. */
+export interface CreatePaymentResult {
   /** The CoinPay payment id. */
   paymentId: string;
   /**
@@ -119,14 +132,114 @@ export interface CreateCheckoutResult {
   payment: CoinPayPayment;
 }
 
-/** Result of {@link CoinPayClient.getCheckout}. */
-export interface GetCheckoutResult {
+/** Result of {@link CoinPayClient.getPayment}. */
+export interface GetPaymentResult {
   /** The CoinPay payment id. */
   paymentId: string;
   /** Payment status (`pending`, `confirmed`, `forwarded`, `expired`, …). */
   status: string;
   /** The raw payment object returned by the API. */
   payment: CoinPayPayment;
+}
+
+/** Checkout-session status: `open` until paid or expired. */
+export type CoinPayCheckoutSessionStatus = "open" | "paid" | "expired" | (string & {});
+
+/** A checkout session as returned by `/api/checkout/sessions` (snake_case). */
+export interface CoinPayCheckoutSession {
+  id: string;
+  url?: string;
+  status?: CoinPayCheckoutSessionStatus;
+  amount?: number | string;
+  currency?: string;
+  description?: string | null;
+  customer_email?: string;
+  account_id?: string;
+  property?: string;
+  metadata?: Record<string, unknown>;
+  success_url?: string | null;
+  cancel_url?: string | null;
+  expires_at?: string;
+  /** Method codes offered on create (`"BTC"`, `"USDC_POL"`, `"PAYPAL"`, ...). */
+  methods?: unknown[];
+  payment_id?: string | null;
+  paypal_transaction_id?: string | null;
+  paid_at?: string | null;
+  paid_method?: string | null;
+  paid_reference?: string | null;
+  [key: string]: unknown;
+}
+
+/**
+ * Input for {@link CoinPayClient.createCheckout}: a hosted checkout session
+ * (`POST /api/checkout/sessions`). The buyer chooses any coin the business
+ * has a wallet for, or PayPal when connected.
+ */
+export interface CreateCheckoutInput {
+  /** Amount in USD dollars (e.g. `25` = $25.00). */
+  amountUsd: number;
+  /** Email of the person paying. Required. */
+  customerEmail: string;
+  /**
+   * Your site's user id or handle for the payer. Required. For a guest
+   * checkout pass the email.
+   */
+  accountId: string;
+  /**
+   * Site hostname this payment is for (a URL is reduced to its hostname by
+   * the portal). Defaults server-side to the business name; always send it.
+   */
+  property: string;
+  /** Description shown on the hosted page (max 500 chars). */
+  description?: string;
+  /** Merchant metadata, echoed inside every payment webhook's `data.metadata`. */
+  metadata?: Record<string, unknown>;
+  /**
+   * Where the buyer lands after paying. `{CHECKOUT_SESSION_ID}` (and
+   * `{PAYMENT_ID}`) are filled in by the portal.
+   */
+  successUrl?: string;
+  /** Where the "cancel" link on the hosted page goes. */
+  cancelUrl?: string;
+  /** Session lifetime in minutes, 15 to 120. Default 60. */
+  expiresInMinutes?: number;
+  /**
+   * Restrict the methods offered: coin codes (`"BTC"`, `"USDC_POL"`, ...),
+   * `"CRYPTO"` for every coin, `"PAYPAL"`. Default: everything available.
+   */
+  allowedMethods?: string[];
+  /** Business ID; only needed with a merchant (non business-scoped) token. */
+  businessId?: string;
+}
+
+/** Result of {@link CoinPayClient.createCheckout}. */
+export interface CreateCheckoutResult {
+  /** The checkout session id (`cs_...`). */
+  sessionId: string;
+  /** Hosted checkout page to redirect the buyer to (`<root>/checkout/<id>`). */
+  checkoutUrl: string;
+  /** Method codes the buyer will be offered. */
+  methods: string[];
+  /** When the session expires (ISO 8601), when returned. */
+  expiresAt: string | undefined;
+  /** The raw session object returned by the API. */
+  session: CoinPayCheckoutSession;
+}
+
+/** Result of {@link CoinPayClient.getCheckout}. */
+export interface GetCheckoutResult {
+  /** The checkout session id (`cs_...`). */
+  sessionId: string;
+  /** `open`, `paid` or `expired`. */
+  status: CoinPayCheckoutSessionStatus;
+  /** True once the session is paid (any rail). */
+  paid: boolean;
+  /** Underlying crypto payment id, once the buyer picked a coin. */
+  paymentId: string | null;
+  /** Underlying PayPal transaction id, once the buyer picked PayPal. */
+  paypalTransactionId: string | null;
+  /** The raw session object (owner view when called with the business key). */
+  session: CoinPayCheckoutSession;
 }
 
 /** A coin/token as returned by `GET /api/tokens` (snake_case fields). */
@@ -153,12 +266,20 @@ export interface ListCoinsOptions {
 /** The merchant-side CoinPay client returned by {@link createCoinPayClient}. */
 export interface CoinPayClient {
   /**
-   * Create a payment (`POST /api/payments/create`) and return the hosted
-   * checkout URL to redirect the customer to.
+   * Create a hosted checkout session (`POST /api/checkout/sessions`) and
+   * return the URL to redirect the buyer to. Requires `customerEmail`,
+   * `accountId` and `property`.
    */
   createCheckout(input: CreateCheckoutInput): Promise<CreateCheckoutResult>;
+  /** Fetch a checkout session (`GET /api/checkout/sessions/<id>`). */
+  getCheckout(sessionId: string): Promise<GetCheckoutResult>;
+  /**
+   * Create a single-coin payment (`POST /api/payments/create`). Lower level
+   * than {@link CoinPayClient.createCheckout}; the buyer cannot pick a coin.
+   */
+  createPayment(input: CreatePaymentInput): Promise<CreatePaymentResult>;
   /** Fetch the current state of a payment (`GET /api/payments/<id>`). */
-  getCheckout(paymentId: string): Promise<GetCheckoutResult>;
+  getPayment(paymentId: string): Promise<GetPaymentResult>;
   /**
    * List the coins this business can accept (`GET /api/tokens`). An empty
    * array means no wallet is configured yet.
@@ -219,6 +340,72 @@ export function createCoinPayClient(config: CoinPayClientConfig): CoinPayClient 
 
   return {
     async createCheckout(input) {
+      const customerEmail = typeof input.customerEmail === "string" ? input.customerEmail.trim() : "";
+      const accountId =
+        input.accountId === undefined || input.accountId === null ? "" : String(input.accountId).trim();
+      const property = typeof input.property === "string" ? input.property.trim() : "";
+      if (!customerEmail) {
+        throw new CoinPayApiError("createCheckout: customerEmail is required", 400, "MISSING_CUSTOMER_EMAIL");
+      }
+      if (!accountId) {
+        throw new CoinPayApiError("createCheckout: accountId is required", 400, "MISSING_ACCOUNT_ID");
+      }
+      if (!property) {
+        throw new CoinPayApiError("createCheckout: property is required", 400, "MISSING_PROPERTY");
+      }
+      const body: Record<string, unknown> = {
+        amount: input.amountUsd,
+        currency: "USD",
+        customer_email: customerEmail,
+        account_id: accountId,
+        property,
+      };
+      if (input.description !== undefined) body["description"] = input.description;
+      if (input.metadata !== undefined) body["metadata"] = input.metadata;
+      if (input.successUrl !== undefined) body["success_url"] = input.successUrl;
+      if (input.cancelUrl !== undefined) body["cancel_url"] = input.cancelUrl;
+      body["expires_in_minutes"] = input.expiresInMinutes ?? 60;
+      if (input.allowedMethods !== undefined) body["allowed_methods"] = input.allowedMethods;
+      if (input.businessId !== undefined) body["business_id"] = input.businessId;
+
+      const data = await request("/checkout/sessions", {
+        method: "POST",
+        body: JSON.stringify(body),
+      });
+      const id = data["id"];
+      if (typeof id !== "string" || !id) {
+        throw new CoinPayApiError("CoinPay response missing session id", 200, undefined);
+      }
+      const { success: _success, ...rest } = data;
+      const session = rest as unknown as CoinPayCheckoutSession;
+      const checkoutUrl =
+        typeof data["url"] === "string" && data["url"] ? (data["url"] as string) : `${root}/checkout/${id}`;
+      const methods = Array.isArray(data["methods"])
+        ? (data["methods"] as unknown[]).filter((m): m is string => typeof m === "string")
+        : [];
+      const expiresAt = typeof data["expires_at"] === "string" ? (data["expires_at"] as string) : undefined;
+      return { sessionId: id, checkoutUrl, methods, expiresAt, session };
+    },
+
+    async getCheckout(sessionId) {
+      const data = await request(`/checkout/sessions/${encodeURIComponent(sessionId)}`);
+      const session = data["session"] as CoinPayCheckoutSession | undefined;
+      if (!session || typeof session.id !== "string" || !session.id) {
+        throw new CoinPayApiError("CoinPay response missing session.id", 200, undefined);
+      }
+      const status = typeof session.status === "string" ? session.status : "open";
+      return {
+        sessionId: session.id,
+        status,
+        paid: status === "paid",
+        paymentId: typeof session.payment_id === "string" ? session.payment_id : null,
+        paypalTransactionId:
+          typeof session.paypal_transaction_id === "string" ? session.paypal_transaction_id : null,
+        session,
+      };
+    },
+
+    async createPayment(input) {
       const body: Record<string, unknown> = {
         amount_usd: input.amountUsd,
         currency: input.currency,
@@ -232,6 +419,9 @@ export function createCoinPayClient(config: CoinPayClientConfig): CoinPayClient 
       if (input.webhookUrl !== undefined) body["webhook_url"] = input.webhookUrl;
       if (input.businessId !== undefined) body["business_id"] = input.businessId;
       if (input.expiresIn !== undefined) body["expires_in"] = input.expiresIn;
+      if (input.customerEmail !== undefined) body["customer_email"] = input.customerEmail;
+      if (input.accountId !== undefined) body["account_id"] = input.accountId;
+      if (input.property !== undefined) body["property"] = input.property;
 
       const data = await request("/payments/create", {
         method: "POST",
@@ -246,7 +436,7 @@ export function createCoinPayClient(config: CoinPayClientConfig): CoinPayClient 
       return { paymentId: payment.id, checkoutUrl, payment };
     },
 
-    async getCheckout(paymentId) {
+    async getPayment(paymentId) {
       const data = await request(`/payments/${encodeURIComponent(paymentId)}`);
       const payment = data["payment"] as CoinPayPayment | undefined;
       if (!payment || typeof payment.id !== "string" || !payment.id) {

@@ -52,13 +52,13 @@ describe("createCoinPayClient", () => {
     expect(() => createCoinPayClient({})).toThrow(/apiKey/);
   });
 
-  it("createCheckout posts to /api/payments/create and returns the hosted URL", async () => {
+  it("createPayment posts to /api/payments/create and returns the hosted URL", async () => {
     const fetchMock = vi.fn().mockResolvedValue(
       jsonResponse({ success: true, payment: { id: "pay_123", status: "pending" } }),
     );
     const client = createCoinPayClient({ apiKey: "cp_live_x", fetch: fetchMock });
 
-    const result = await client.createCheckout({
+    const result = await client.createPayment({
       amountUsd: 25,
       currency: "usdc_pol",
       description: "GoldVPN Plus — Monthly",
@@ -98,7 +98,7 @@ describe("createCoinPayClient", () => {
       "https://pay.example.com/api/",
     ]) {
       const client = createCoinPayClient({ apiKey: "k", baseUrl, fetch: fetchMock });
-      const r = await client.createCheckout({ amountUsd: 1, currency: "btc" });
+      const r = await client.createPayment({ amountUsd: 1, currency: "btc" });
       expect(r.checkoutUrl).toBe("https://pay.example.com/pay/p1");
     }
     const [url] = callOf(fetchMock, 2);
@@ -113,7 +113,7 @@ describe("createCoinPayClient", () => {
       }),
     );
     const client = createCoinPayClient({ apiKey: "k", fetch: fetchMock });
-    const r = await client.createCheckout({ amountUsd: 5, currency: "usdc_pol" });
+    const r = await client.createPayment({ amountUsd: 5, currency: "usdc_pol" });
     expect(r.checkoutUrl).toBe("https://checkout.stripe.com/cs_1");
   });
 
@@ -123,7 +123,7 @@ describe("createCoinPayClient", () => {
       .mockResolvedValue(jsonResponse({ success: false, error: "invalid_currency" }, 400));
     const client = createCoinPayClient({ apiKey: "k", fetch: fetchMock });
     const err = await client
-      .createCheckout({ amountUsd: 5, currency: "nope" })
+      .createPayment({ amountUsd: 5, currency: "nope" })
       .catch((e: unknown) => e);
     expect(err).toBeInstanceOf(CoinPayApiError);
     expect((err as CoinPayApiError).status).toBe(400);
@@ -136,7 +136,7 @@ describe("createCoinPayClient", () => {
       .fn()
       .mockResolvedValue(jsonResponse({ success: false, message: "no wallet" }, 200));
     const client = createCoinPayClient({ apiKey: "k", fetch: fetchMock });
-    await expect(client.createCheckout({ amountUsd: 5, currency: "btc" })).rejects.toThrow(
+    await expect(client.createPayment({ amountUsd: 5, currency: "btc" })).rejects.toThrow(
       /no wallet/,
     );
   });
@@ -144,17 +144,17 @@ describe("createCoinPayClient", () => {
   it("throws when the response is missing payment.id", async () => {
     const fetchMock = vi.fn().mockResolvedValue(jsonResponse({ success: true }, 200));
     const client = createCoinPayClient({ apiKey: "k", fetch: fetchMock });
-    await expect(client.createCheckout({ amountUsd: 5, currency: "btc" })).rejects.toThrow(
+    await expect(client.createPayment({ amountUsd: 5, currency: "btc" })).rejects.toThrow(
       /missing payment\.id/,
     );
   });
 
-  it("getCheckout fetches /api/payments/<id> and returns the status", async () => {
+  it("getPayment fetches /api/payments/<id> and returns the status", async () => {
     const fetchMock = vi.fn().mockResolvedValue(
       jsonResponse({ success: true, payment: { id: "pay_7", status: "confirmed" } }),
     );
     const client = createCoinPayClient({ apiKey: "k", fetch: fetchMock });
-    const r = await client.getCheckout("pay_7");
+    const r = await client.getPayment("pay_7");
     expect(r).toMatchObject({ paymentId: "pay_7", status: "confirmed" });
     const [url, init] = callOf(fetchMock);
     expect(url).toBe("https://coinpayportal.com/api/payments/pay_7");

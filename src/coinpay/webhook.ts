@@ -120,6 +120,16 @@ export interface CoinPayWebhookEvent {
     payment_address?: string;
     tx_hash?: string;
     confirmed_at?: string;
+    /** Set when the payment came from a hosted checkout session. */
+    checkout_session_id?: string;
+    /** Payer email (checkout sessions always carry it). */
+    customer_email?: string;
+    /** The site's user id or handle for the payer. */
+    account_id?: string;
+    /** Site hostname the payment is for. */
+    property?: string;
+    /** `"paypal"` for the PayPal rail; absent for crypto. */
+    rail?: string;
     metadata?: Record<string, unknown>;
     [key: string]: unknown;
   };
@@ -153,4 +163,122 @@ export function parseCoinPayWebhookEvent(rawBody: string): CoinPayWebhookEvent {
     event.data = {};
   }
   return event;
+}
+
+
+/** Event types that mean the money arrived (crypto confirmed/forwarded, PayPal capture). */
+export const COINPAY_PAID_EVENT_TYPES: readonly string[] = ["payment.confirmed", "payment.forwarded"];
+
+/** Payment statuses that mean paid. PayPal captures report `completed`. */
+const PAID_STATUSES = new Set(["confirmed", "forwarded", "completed", "paid"]);
+
+/** A flattened, typed view of a CoinPay webhook, see {@link readCoinPayWebhook}. */
+export interface CoinPayWebhookSummary {
+  /** Event id (`evt_<paymentId>_<ts>`). NOT the payment id. */
+  eventId: string | null;
+  /** Event type, e.g. `"payment.confirmed"`. */
+  type: string;
+  /** Crypto payment id or PayPal transaction id. */
+  paymentId: string | null;
+  /** Lower-cased payment status (`confirmed`, `forwarded`, `completed`, `expired`, ...). */
+  status: string;
+  /** True when this event means the payment is paid (confirmed or forwarded). */
+  paid: boolean;
+  /** Checkout session id (`cs_...`) when the payment came from a session. */
+  checkoutSessionId: string | null;
+  /** Payer email. */
+  customerEmail: string | null;
+  /** The site's user id or handle for the payer (the email for guests). */
+  accountId: string | null;
+  /** Site hostname. */
+  property: string | null;
+  /** Merchant metadata (plus the customer fields the portal copies in). */
+  metadata: Record<string, unknown>;
+  /** USD amount when present. */
+  amountUsd: number | null;
+  /** Coin code or `USD` for PayPal. */
+  currency: string | null;
+  /** `"paypal"` or `"crypto"`. */
+  rail: "paypal" | "crypto";
+  /** Business id the event belongs to. */
+  businessId: string | null;
+  /** The parsed event. */
+  event: CoinPayWebhookEvent;
+}
+
+function str(value: unknown): string | null {
+  if (typeof value === "string" && value) return value;
+  if (typeof value === "number" && Number.isFinite(value)) return String(value);
+  return null;
+}
+
+/**
+ * Read a CoinPay webhook into a flat summary: who paid (`customerEmail`,
+ * `accountId`), for which site (`property`), which checkout session, and
+ * whether it is paid. Reads the nested `data` first (the live wire shape)
+ * and falls back to flat fields (the legacy test sender), then to
+ * `metadata`. Never treats the top-level event id as the payment id.
+ *
+ * @param input - A raw (signature-verified) body or an already parsed event.
+ * @throws {Error} When a raw body is not a valid event (see {@link parseCoinPayWebhookEvent}).
+ */
+export function readCoinPayWebhook(input: string | CoinPayWebhookEvent): CoinPayWebhookSummary {
+  const event = typeof input === "string" ? parseCoinPayWebhookEvent(input) : input;
+  const raw = event as unknown as Record<string, unknown>;
+  const data = (event.data && typeof event.data === "object" ? event.data : {}) as Record<string, unknown>;
+  const nested = Object.keys(data).length > 0;
+  const metaRaw = data["metadata"] ?? (nested ? undefined : raw["metadata"]);
+  const metadata =
+    metaRaw && typeof metaRaw === "object" && !Array.isArray(metaRaw)
+      ? (metaRaw as Record<string, unknown>)
+      : {};
+  const pick = (key: string): string | null =>
+    str(data[key]) ?? (nested ? null : str(raw[key])) ?? str(metadata[key]);
+
+  const type = event.type;
+  const status = (str(data["status"]) ?? (nested ? null : str(raw["status"])) ?? "").toLowerCase();
+  const paymentId = str(data["payment_id"]) ?? (nested ? str(data["id"]) : str(raw["payment_id"]));
+  const amount = data["amount_usd"] ?? data["amount"] ?? (nested ? undefined : raw["amount_usd"]);
+  const amountNum = typeof amount === "number" ? amount : typeof amount === "string" ? Number(amount) : NaN;
+  const rail = (str(data["rail"]) ?? str(data["payment_method"]) ?? "").toLowerCase() === "paypal" ? "paypal" : "crypto";
+  const paid =
+    COINPAY_PAID_EVENT_TYPES.includes(type) ||
+    (type.startsWith("payment.") && !type.endsWith("expired") && !type.endsWith("failed") && PAID_STATUSES.has(status));
+
+  return {
+    eventId: nested ? str(raw["id"]) : null,
+    type,
+    paymentId,
+    status,
+    paid,
+    checkoutSessionId: pick("checkout_session_id"),
+    customerEmail: pick("customer_email"),
+    accountId: pick("account_id"),
+    property: pick("property"),
+    metadata,
+    amountUsd: Number.isFinite(amountNum) ? amountNum : null,
+    currency: str(data["currency"]),
+    rail,
+    businessId: str(raw["business_id"]),
+    event,
+  };
+}
+
+/** Options for {@link verifyAndReadCoinPayWebhook}. */
+export type VerifyAndReadCoinPayWebhookOptions = VerifyCoinPayWebhookOptions;
+
+/**
+ * Verify the signature, then {@link readCoinPayWebhook}. Returns `null` when
+ * the signature is invalid or the body is not a CoinPay event, so a route can
+ * answer 401/400 without a try/catch.
+ */
+export function verifyAndReadCoinPayWebhook(
+  options: VerifyAndReadCoinPayWebhookOptions,
+): CoinPayWebhookSummary | null {
+  if (!verifyCoinPayWebhook(options)) return null;
+  try {
+    return readCoinPayWebhook(options.rawBody);
+  } catch {
+    return null;
+  }
 }
