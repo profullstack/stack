@@ -205,7 +205,7 @@ export const GET = createCoinPayCallbackHandler({
   clientSecret: process.env.COINPAY_OAUTH_CLIENT_SECRET!,
   redirectUri: `${process.env.NEXT_PUBLIC_APP_URL}/api/auth/coinpay/callback`,
   onSuccess: async ({ claims, tokens, cookie }) => {
-    await provisionSession(claims); // your app logic (supabase, JWT, …)
+    await provisionSession(claims); // your app logic: find the user by claims.sub, not email
     return "/chat";                 // path, absolute URL, URL, or Response
   },
   // onError: (code) => `/auth?error=${code}`,   // optional override
@@ -219,6 +219,15 @@ the outgoing response. Errors redirect to
 `<appOrigin>/auth?error=<code>` with qrypt.chat-compatible codes:
 `coinpay_denied`, `coinpay_missing_code`, `coinpay_state_mismatch`,
 `coinpay_login_failed` (customizable via `errorUrl` / `onError`).
+
+**Bind the session to `claims.sub`, never to `claims.email`.** CoinPay does
+not verify email addresses: `email_verified` is always `false`, and anyone can
+register a CoinPay account with any address. In `provisionSession`, look the
+user up by the CoinPay `sub` (store it on the account, unique). Do not sign
+into an existing local account because its email matches, do not mark the
+CoinPay email as verified, and do not grant admin or other privileges from it
+(e.g. an `ADMIN_EMAILS` list). Link CoinPay to an existing account only while
+the user is already signed in to that account.
 
 ---
 
