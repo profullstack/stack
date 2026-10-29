@@ -1,5 +1,12 @@
 # @profullstack/stack/email
 
+> **The contact form moved to [`@profullstack/contact-form`](https://www.npmjs.com/package/@profullstack/contact-form)**
+> (0.6.0). It owns the questions (generic defaults, override per site), the
+> markup (HTML string or `<ContactForm>`), the form-guard token and the route
+> in one object: `createContactForm({ site, to })`. `createContactRoute` and
+> `createContactGuard` below are re-exported from it unchanged, so existing
+> routes keep working; new code should use `createContactForm`.
+
 Contact-form route handler plus everything an app needs for sending email.
 Replaces the hand-rolled Resend contact routes copy-pasted across the
 Profullstack apps (naallo, d0rz, libertyhillcoin, communitygardens-web,
