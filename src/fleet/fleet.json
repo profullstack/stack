@@ -12,11 +12,11 @@
  },
  "services": [
   {
-   "domain": "advis0r.com",
+   "domain": "advis0r.pwa.pit.world",
    "name": "advis0r",
    "description": "Executive-transcript stock discovery — evidence-backed research watchlists. Research aid, not financial advice.",
    "category": "finance",
-   "url": "https://advis0r.com/",
+   "url": "https://advis0r.pwa.pit.world/",
    "live": true,
    "auth": {
     "kind": "oauth",
@@ -24,8 +24,8 @@
     "issuer": "https://coinpayportal.com"
    },
    "surfaces": {
-    "web": "https://advis0r.com/",
-    "api": "https://advis0r.com/api",
+    "web": "https://advis0r.pwa.pit.world/",
+    "api": "https://advis0r.pwa.pit.world/api",
     "openapi": null,
     "mcp": null,
     "mcp_tools": null,
@@ -33,17 +33,17 @@
     "llms": null,
     "install": null,
     "pwa": true,
-    "openaccess": "https://advis0r.com/.well-known/openaccess.json"
+    "openaccess": "https://advis0r.pwa.pit.world/.well-known/openaccess.json"
    },
    "npm": [],
    "pwamart": "https://pwamart.com/apps/advis0r-com"
   },
   {
-   "domain": "agenticjobs.work",
+   "domain": "agenticjobs.pwa.pit.world",
    "name": "Agentic Jobs",
    "description": "Jobs posted here, not scraped from somewhere else.",
    "category": "business",
-   "url": "https://agenticjobs.work/",
+   "url": "https://agenticjobs.pwa.pit.world/",
    "live": true,
    "auth": {
     "kind": "oauth",
@@ -51,16 +51,16 @@
     "issuer": "https://coinpayportal.com"
    },
    "surfaces": {
-    "web": "https://agenticjobs.work/",
+    "web": "https://agenticjobs.pwa.pit.world/",
     "api": null,
-    "openapi": "https://agenticjobs.work/openapi.json",
-    "mcp": "https://agenticjobs.work/api/mcp",
+    "openapi": "https://agenticjobs.pwa.pit.world/openapi.json",
+    "mcp": "https://agenticjobs.pwa.pit.world/api/mcp",
     "mcp_tools": 30,
-    "openmcp": "https://agenticjobs.work/.well-known/openmcp.json",
-    "llms": "https://agenticjobs.work/llms.txt",
-    "install": "curl -fsSL https://agenticjobs.work/install.sh | sh",
+    "openmcp": "https://agenticjobs.pwa.pit.world/.well-known/openmcp.json",
+    "llms": "https://agenticjobs.pwa.pit.world/llms.txt",
+    "install": "curl -fsSL https://agenticjobs.pwa.pit.world/install.sh | sh",
     "pwa": true,
-    "openaccess": "https://agenticjobs.work/.well-known/openaccess.json"
+    "openaccess": "https://agenticjobs.pwa.pit.world/.well-known/openaccess.json"
    },
    "npm": [
     "@profullstack/agenticjobs@0.22.4",
@@ -69,11 +69,11 @@
    "pwamart": "https://pwamart.com/apps/agentic-jobs"
   },
   {
-   "domain": "aiornot.vote",
+   "domain": "aiornot.pwa.pit.world",
    "name": "AIorNot.vote",
    "description": "Can you tell AI from real? Play the crowd-sourced AI-detection game — vote on images, videos &amp; posts, or get the crowd&#x27;s verdict by API and RSS.",
    "category": "ai",
-   "url": "https://aiornot.vote/",
+   "url": "https://aiornot.pwa.pit.world/",
    "live": true,
    "auth": {
     "kind": "oauth",
@@ -81,16 +81,16 @@
     "issuer": "https://coinpayportal.com"
    },
    "surfaces": {
-    "web": "https://aiornot.vote/",
+    "web": "https://aiornot.pwa.pit.world/",
     "api": null,
     "openapi": null,
     "mcp": null,
     "mcp_tools": null,
     "openmcp": null,
-    "llms": "https://aiornot.vote/llms.txt",
+    "llms": "https://aiornot.pwa.pit.world/llms.txt",
     "install": null,
     "pwa": false,
-    "openaccess": "https://aiornot.vote/.well-known/openaccess.json"
+    "openaccess": "https://aiornot.pwa.pit.world/.well-known/openaccess.json"
    },
    "npm": [],
    "pwamart": null
@@ -150,11 +150,11 @@
    "pwamart": null
   },
   {
-   "domain": "bg0ne.com",
+   "domain": "bg0ne.pwa.pit.world",
    "name": "bg0ne",
    "description": "Remove image backgrounds with open models. Free previews, pay by the image for full resolution, or self-host the whole thing.",
    "category": "design",
-   "url": "https://bg0ne.com/",
+   "url": "https://bg0ne.pwa.pit.world/",
    "live": true,
    "auth": {
     "kind": "oauth",
@@ -162,7 +162,7 @@
     "issuer": "https://coinpayportal.com"
    },
    "surfaces": {
-    "web": "https://bg0ne.com/",
+    "web": "https://bg0ne.pwa.pit.world/",
     "api": null,
     "openapi": null,
     "mcp": null,
@@ -235,11 +235,11 @@
    "pwamart": "https://pwamart.com/apps/bl0ggers"
   },
   {
-   "domain": "brisk.news",
+   "domain": "brisk.pwa.pit.world",
    "name": "brisk.news",
    "description": "Get AI-powered summaries and audio briefings of the latest news.",
    "category": "news",
-   "url": "https://brisk.news/",
+   "url": "https://brisk.pwa.pit.world/",
    "live": true,
    "auth": {
     "kind": "oauth",
@@ -247,7 +247,7 @@
     "issuer": "https://coinpayportal.com"
    },
    "surfaces": {
-    "web": "https://brisk.news/",
+    "web": "https://brisk.pwa.pit.world/",
     "api": null,
     "openapi": null,
     "mcp": null,
@@ -256,7 +256,7 @@
     "llms": null,
     "install": null,
     "pwa": true,
-    "openaccess": "https://brisk.news/.well-known/openaccess.json"
+    "openaccess": "https://brisk.pwa.pit.world/.well-known/openaccess.json"
    },
    "npm": [],
    "pwamart": "https://pwamart.com/apps/brisk-news"
@@ -318,11 +318,11 @@
    "pwamart": "https://pwamart.com/apps/p2p-one"
   },
   {
-   "domain": "c0ncerts.com",
+   "domain": "c0ncerts.pwa.pit.world",
    "name": "c0ncerts",
    "description": "Ticketed livestreams, replay access, reusable performance footage, and optional production partners for bands, venues, and promoters.",
    "category": "media",
-   "url": "https://c0ncerts.com/",
+   "url": "https://c0ncerts.pwa.pit.world/",
    "live": true,
    "auth": {
     "kind": "oauth",
@@ -330,26 +330,26 @@
     "issuer": "https://coinpayportal.com"
    },
    "surfaces": {
-    "web": "https://c0ncerts.com/",
+    "web": "https://c0ncerts.pwa.pit.world/",
     "api": null,
     "openapi": null,
     "mcp": null,
     "mcp_tools": null,
     "openmcp": null,
-    "llms": "https://c0ncerts.com/llms.txt",
+    "llms": "https://c0ncerts.pwa.pit.world/llms.txt",
     "install": null,
     "pwa": true,
-    "openaccess": "https://c0ncerts.com/.well-known/openaccess.json"
+    "openaccess": "https://c0ncerts.pwa.pit.world/.well-known/openaccess.json"
    },
    "npm": [],
    "pwamart": "https://pwamart.com/apps/c0ncerts-com"
   },
   {
-   "domain": "c0upons.com",
+   "domain": "c0upons.pwa.pit.world",
    "name": "c0upons",
    "description": "Find and share the best coupon codes. Browse 43,819 coupons across 635 stores — updated daily by the community. 100% free, no account needed.",
    "category": "shopping",
-   "url": "https://c0upons.com/",
+   "url": "https://c0upons.pwa.pit.world/",
    "live": true,
    "auth": {
     "kind": "oauth",
@@ -357,16 +357,16 @@
     "issuer": "https://coinpayportal.com"
    },
    "surfaces": {
-    "web": "https://c0upons.com/",
+    "web": "https://c0upons.pwa.pit.world/",
     "api": null,
     "openapi": null,
-    "mcp": "https://c0upons.com/api/mcp",
+    "mcp": "https://c0upons.pwa.pit.world/api/mcp",
     "mcp_tools": 10,
-    "openmcp": "https://c0upons.com/.well-known/openmcp.json",
-    "llms": "https://c0upons.com/llms.txt",
-    "install": "curl -fsSL https://c0upons.com/install.sh | sh",
+    "openmcp": "https://c0upons.pwa.pit.world/.well-known/openmcp.json",
+    "llms": "https://c0upons.pwa.pit.world/llms.txt",
+    "install": "curl -fsSL https://c0upons.pwa.pit.world/install.sh | sh",
     "pwa": true,
-    "openaccess": "https://c0upons.com/.well-known/openaccess.json"
+    "openaccess": "https://c0upons.pwa.pit.world/.well-known/openaccess.json"
    },
    "npm": [],
    "pwamart": "https://pwamart.com/apps/c0upons"
@@ -514,11 +514,11 @@
    "pwamart": "https://pwamart.com/apps/d0rz"
   },
   {
-   "domain": "d3vices.com",
+   "domain": "d3vices.pwa.pit.world",
    "name": "d3vices",
    "description": "Free, open-source hardware diagnostics. Test your mic, camera, speakers, screen, keyboard, sensors and network in the browser. Nothing is uploaded.",
    "category": "utilities",
-   "url": "https://d3vices.com/",
+   "url": "https://d3vices.pwa.pit.world/",
    "live": true,
    "auth": {
     "kind": "oauth",
@@ -526,16 +526,16 @@
     "issuer": "https://coinpayportal.com"
    },
    "surfaces": {
-    "web": "https://d3vices.com/",
+    "web": "https://d3vices.pwa.pit.world/",
     "api": null,
     "openapi": null,
     "mcp": null,
     "mcp_tools": null,
     "openmcp": null,
-    "llms": "https://d3vices.com/llms.txt",
+    "llms": "https://d3vices.pwa.pit.world/llms.txt",
     "install": null,
     "pwa": true,
-    "openaccess": "https://d3vices.com/.well-known/openaccess.json"
+    "openaccess": "https://d3vices.pwa.pit.world/.well-known/openaccess.json"
    },
    "npm": [],
    "pwamart": "https://pwamart.com/apps/d3vices"
@@ -625,11 +625,11 @@
    "pwamart": "https://pwamart.com/apps/genrewatch"
   },
   {
-   "domain": "goingbroke.now",
+   "domain": "goingbroke.pwa.pit.world",
    "name": "Going Broke",
    "description": "Start a countdown to broke. Every crypto deposit buys back time, pays down the debt, and unlocks a 50% coupon across the Profullstack network.",
    "category": "finance",
-   "url": "https://goingbroke.now/",
+   "url": "https://goingbroke.pwa.pit.world/",
    "live": true,
    "auth": {
     "kind": "oauth",
@@ -637,16 +637,16 @@
     "issuer": "https://coinpayportal.com"
    },
    "surfaces": {
-    "web": "https://goingbroke.now/",
+    "web": "https://goingbroke.pwa.pit.world/",
     "api": null,
     "openapi": null,
     "mcp": null,
     "mcp_tools": null,
     "openmcp": null,
-    "llms": "https://goingbroke.now/llms.txt",
+    "llms": "https://goingbroke.pwa.pit.world/llms.txt",
     "install": null,
     "pwa": false,
-    "openaccess": "https://goingbroke.now/.well-known/openaccess.json"
+    "openaccess": "https://goingbroke.pwa.pit.world/.well-known/openaccess.json"
    },
    "npm": [],
    "pwamart": null
@@ -882,11 +882,11 @@
    "pwamart": null
   },
   {
-   "domain": "naallo.com",
+   "domain": "naallo.pwa.pit.world",
    "name": "Naallo",
    "description": "Custom tattoo artistry and premium mobile auto detailing. Two crafts, one artist. Book your session today.",
    "category": "lifestyle",
-   "url": "https://naallo.com/",
+   "url": "https://naallo.pwa.pit.world/",
    "live": true,
    "auth": {
     "kind": "oauth",
@@ -894,7 +894,7 @@
     "issuer": "https://coinpayportal.com"
    },
    "surfaces": {
-    "web": "https://naallo.com/",
+    "web": "https://naallo.pwa.pit.world/",
     "api": null,
     "openapi": null,
     "mcp": null,
@@ -903,7 +903,7 @@
     "llms": null,
     "install": null,
     "pwa": false,
-    "openaccess": "https://naallo.com/.well-known/openaccess.json"
+    "openaccess": "https://naallo.pwa.pit.world/.well-known/openaccess.json"
    },
    "npm": [],
    "pwamart": null
@@ -1308,11 +1308,11 @@
    "pwamart": null
   },
   {
-   "domain": "recipepdfs.com",
+   "domain": "recipepdfs.pwa.pit.world",
    "name": "RecipePDFs",
    "description": "Publish, browse, and buy free or paid recipe PDF cookbooks with Coinpay.",
    "category": "lifestyle",
-   "url": "https://recipepdfs.com/",
+   "url": "https://recipepdfs.pwa.pit.world/",
    "live": true,
    "auth": {
     "kind": "oauth",
@@ -1320,16 +1320,16 @@
     "issuer": "https://coinpayportal.com"
    },
    "surfaces": {
-    "web": "https://recipepdfs.com/",
+    "web": "https://recipepdfs.pwa.pit.world/",
     "api": null,
     "openapi": null,
-    "mcp": "https://recipepdfs.com/api/mcp",
+    "mcp": "https://recipepdfs.pwa.pit.world/api/mcp",
     "mcp_tools": 3,
     "openmcp": null,
-    "llms": "https://recipepdfs.com/llms.txt",
+    "llms": "https://recipepdfs.pwa.pit.world/llms.txt",
     "install": null,
     "pwa": false,
-    "openaccess": "https://recipepdfs.com/.well-known/openaccess.json"
+    "openaccess": "https://recipepdfs.pwa.pit.world/.well-known/openaccess.json"
    },
    "npm": [],
    "pwamart": null
@@ -1392,11 +1392,11 @@
    "pwamart": "https://pwamart.com/apps/rss-amplifier"
   },
   {
-   "domain": "saasrow.com",
+   "domain": "saasrow.pwa.pit.world",
    "name": "SaaSRow",
    "description": "Discover, vote on, and submit software in the SaaSRow directory. Free listings with DoFollow backlinks.",
    "category": "business",
-   "url": "https://saasrow.com/",
+   "url": "https://saasrow.pwa.pit.world/",
    "live": true,
    "auth": {
     "kind": "oauth",
@@ -1404,16 +1404,16 @@
     "issuer": "https://coinpayportal.com"
    },
    "surfaces": {
-    "web": "https://saasrow.com/",
-    "api": "https://saasrow.com/api/v1",
+    "web": "https://saasrow.pwa.pit.world/",
+    "api": "https://saasrow.pwa.pit.world/api/v1",
     "openapi": null,
     "mcp": null,
     "mcp_tools": null,
-    "openmcp": "https://saasrow.com/.well-known/openmcp.json",
-    "llms": "https://saasrow.com/llms.txt",
+    "openmcp": "https://saasrow.pwa.pit.world/.well-known/openmcp.json",
+    "llms": "https://saasrow.pwa.pit.world/llms.txt",
     "install": null,
     "pwa": false,
-    "openaccess": "https://saasrow.com/.well-known/openaccess.json"
+    "openaccess": "https://saasrow.pwa.pit.world/.well-known/openaccess.json"
    },
    "npm": [
     "@profullstack/saasrow@0.1.0"
@@ -1589,11 +1589,11 @@
    "pwamart": "https://pwamart.com/apps/tronbrowser"
   },
   {
-   "domain": "typeheard.com",
+   "domain": "typeheard.pwa.pit.world",
    "name": "typeheard",
    "description": "Transcribe interviews, lectures, podcasts and voice memos you already have. The first 3 minutes of any file are free; after that about $1.00 an hour, no subscription.",
    "category": "ai",
-   "url": "https://typeheard.com/",
+   "url": "https://typeheard.pwa.pit.world/",
    "live": true,
    "auth": {
     "kind": "oauth",
@@ -1601,13 +1601,13 @@
     "issuer": "https://coinpayportal.com"
    },
    "surfaces": {
-    "web": "https://typeheard.com/",
+    "web": "https://typeheard.pwa.pit.world/",
     "api": null,
     "openapi": null,
     "mcp": null,
     "mcp_tools": null,
     "openmcp": null,
-    "llms": "https://typeheard.com/llms.txt",
+    "llms": "https://typeheard.pwa.pit.world/llms.txt",
     "install": null,
     "pwa": true,
     "openaccess": null
@@ -1728,11 +1728,11 @@
    "pwamart": "https://pwamart.com/apps/watchnews"
   },
   {
-   "domain": "weedforcrypto.com",
+   "domain": "weedforcrypto.pwa.pit.world",
    "name": "WeedForCrypto",
    "description": "Find licensed dispensaries that accept Bitcoin, Lightning, and stablecoin payments through CoinPay.",
    "category": "shopping",
-   "url": "https://weedforcrypto.com/",
+   "url": "https://weedforcrypto.pwa.pit.world/",
    "live": true,
    "auth": {
     "kind": "oauth",
@@ -1740,7 +1740,7 @@
     "issuer": "https://coinpayportal.com"
    },
    "surfaces": {
-    "web": "https://weedforcrypto.com/",
+    "web": "https://weedforcrypto.pwa.pit.world/",
     "api": null,
     "openapi": null,
     "mcp": null,
@@ -1749,7 +1749,7 @@
     "llms": null,
     "install": null,
     "pwa": true,
-    "openaccess": "https://weedforcrypto.com/.well-known/openaccess.json"
+    "openaccess": "https://weedforcrypto.pwa.pit.world/.well-known/openaccess.json"
    },
    "npm": [],
    "pwamart": "https://pwamart.com/apps/weedforcrypto"
