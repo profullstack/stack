@@ -315,7 +315,7 @@ Identical replacement applies to crawlproof.com `lib/coinpay.ts`
 `verifyWebhookSignature` (the multi-`v1` rotation support is built in — the
 "try many secrets/messages" guesswork can go away), ugig.net
 `src/lib/coinpayportal.ts`, aiornot.vote, qaaas.dev, moshcoding, pairux.com,
-vu1nz.com, bl0ggers, c0upons, recipepdfs.com webhook routes.
+bl0ggers, c0upons, recipepdfs.com webhook routes.
 
 ### 4. ringhuman.com — `packages/payments/src/coinpayportal.ts`
 
@@ -418,7 +418,7 @@ export const GET = createCoinPayCallbackHandler({
 });
 ```
 
-### 7. Next.js app lib clients (crawlproof.com, ugig.net, aiornot.vote, qaaas.dev, moshcoding, pairux.com, vu1nz.com)
+### 7. Next.js app lib clients (crawlproof.com, ugig.net, aiornot.vote, qaaas.dev, moshcoding, pairux.com)
 
 **Before:** each app has a `lib/coinpay.ts` with `createCheckout` /
 `createPayment` / `getPaymentStatus` reading `COINPAY_API_KEY` /

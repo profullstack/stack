@@ -1674,33 +1674,6 @@
    "pwamart": null
   },
   {
-   "domain": "vu1nz.com",
-   "name": "vu1nz",
-   "description": "One GitHub Action, two scanners: 17 CI/CD workflow security checks PLUS a malware sweep of every new npm / pip / cargo / gem / go.mod / composer package added in a PR. Catches what CodeQL, Dependabot, and Snyk miss. 14-day free trial, $100/month per GitHub org. Card or crypto.",
-   "category": "security",
-   "url": "https://vu1nz.com/",
-   "live": true,
-   "auth": {
-    "kind": "oauth",
-    "provider": "coinpay",
-    "issuer": "https://coinpayportal.com"
-   },
-   "surfaces": {
-    "web": "https://vu1nz.com/",
-    "api": null,
-    "openapi": null,
-    "mcp": "https://vu1nz.com/api/mcp",
-    "mcp_tools": 7,
-    "openmcp": "https://vu1nz.com/.well-known/openmcp.json",
-    "llms": null,
-    "install": null,
-    "pwa": false,
-    "openaccess": "https://vu1nz.com/.well-known/openaccess.json"
-   },
-   "npm": [],
-   "pwamart": null
-  },
-  {
    "domain": "watchnews.now",
    "name": "WatchNews",
    "description": "Follow a section or a newsroom and read what they actually published, from free sources only. Free.",

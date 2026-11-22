@@ -12,9 +12,9 @@ import {
 } from "../src/fleet";
 
 describe("fleet catalog", () => {
-  it("covers the 62 services, each unique, each on CoinPay OAuth", () => {
-    expect(FLEET.services.length).toBe(62);
-    expect(new Set(FLEET.services.map((s) => s.domain)).size).toBe(62);
+  it("covers the 61 services, each unique, each on CoinPay OAuth", () => {
+    expect(FLEET.services.length).toBe(61);
+    expect(new Set(FLEET.services.map((s) => s.domain)).size).toBe(61);
     for (const s of FLEET.services) {
       expect(s.auth).toEqual({ kind: "oauth", provider: "coinpay", issuer: "https://coinpayportal.com" });
       expect(s.url).toMatch(/^https:\/\//);
@@ -34,7 +34,7 @@ describe("fleet catalog", () => {
     expect(listServices({ has: "mcp" }).every((s) => s.surfaces.mcp)).toBe(true);
     expect(listServices({ category: "security" }).length).toBeGreaterThan(0);
     expect(searchServices("terminal ui")[0].domain).toBe("hqtui.com");
-    expect(categories().reduce((n, c) => n + c.count, 0)).toBe(62);
+    expect(categories().reduce((n, c) => n + c.count, 0)).toBe(61);
   });
 
   it("signs fleet events so the CoinPay verifier accepts them", () => {
